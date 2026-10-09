@@ -448,3 +448,17 @@ html, body { overflow-x: clip; }
 
 .no-scrollbar { scrollbar-width: none; }
 .no-scrollbar::-webkit-scrollbar { display: none; }
+
+/* Lokatsiya fonlari */
+.loc-photo { filter: saturate(1.05) contrast(1.03) brightness(0.78); }
+.loc-scrim {
+  background:
+    linear-gradient(90deg, rgba(3, 17, 13, 0.62) 0%, rgba(3, 17, 13, 0.18) 55%, rgba(3, 17, 13, 0.05) 100%),
+    linear-gradient(180deg, rgba(3, 17, 13, 0.35) 0%, transparent 25%, transparent 70%, rgba(3, 17, 13, 0.6) 100%);
+}
+[data-theme="light"] .loc-photo { filter: saturate(0.95) brightness(1.02); }
+[data-theme="light"] .loc-scrim {
+  background:
+    linear-gradient(90deg, rgba(238, 247, 242, 0.55) 0%, rgba(238, 247, 242, 0.12) 55%, transparent 100%),
+    linear-gradient(180deg, rgba(238, 247, 242, 0.45) 0%, transparent 25%, transparent 70%, rgba(238, 247, 242, 0.6) 100%);
+}

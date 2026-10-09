@@ -10,6 +10,7 @@ import {
   type IconProps,
 } from "./icons";
 import { PHOTO_CREDITS } from "./CityBackdrop";
+import { LOCATION_PHOTOS } from "@/lib/scene";
 import { cn, Disclaimer, Logo } from "./ui";
 
 type NavItem = { href: string; key: DictKey; icon: (p: IconProps) => React.JSX.Element };
@@ -165,7 +166,7 @@ export function Footer() {
         <div>
           <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-low">{t("footer.photos")} · Wikimedia Commons</p>
           <ul className="space-y-1.5 text-xs text-mid">
-            {PHOTO_CREDITS.map((c) => (
+            {[...PHOTO_CREDITS, ...Object.values(LOCATION_PHOTOS).map((p) => ({ place: p.place, author: p.credit, license: p.license, url: p.url }))].map((c) => (
               <li key={c.url}>
                 <a href={c.url} target="_blank" rel="noreferrer" className="hover:text-hi">
                   {c.place} — {c.author}, <span className="text-low">{c.license}</span>

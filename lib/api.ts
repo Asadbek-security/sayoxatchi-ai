@@ -3,7 +3,7 @@
 // Backend dasturchisi: faqat shu faylni o‘zgartirish yetarli.
 import { analyses, jobs, resorts, reviews, users } from "./mock-data";
 import { computeTrustScore, METRIC_KEYS } from "./score";
-import type { AiAnalysis, AnalysisJob, ImageCompareResult, Resort, Review, Topic, TopicBalance, User } from "./types";
+import type { AiAnalysis, AnalysisJob, ImageCompareResult, LocationType, Resort, Review, Topic, TopicBalance, User } from "./types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 const delay = (ms = 250) => new Promise((r) => setTimeout(r, ms));
@@ -28,6 +28,7 @@ export interface SearchParams {
   district?: string;
   minScore?: number;
   minRating?: number;
+  location?: LocationType | "";
   sort?: "score" | "rating" | "price";
 }
 
@@ -43,6 +44,7 @@ export async function searchResorts(p: SearchParams = {}): Promise<Resort[]> {
   if (p.district) list = list.filter((r) => r.district === p.district);
   if (p.minScore) list = list.filter((r) => (r.trust_score ?? 0) >= p.minScore!);
   if (p.minRating) list = list.filter((r) => r.rating >= p.minRating!);
+  if (p.location) list = list.filter((r) => r.locations.includes(p.location as LocationType));
   const sorters = {
     score: (a: Resort, b: Resort) => (b.trust_score ?? -1) - (a.trust_score ?? -1),
     rating: (a: Resort, b: Resort) => b.rating - a.rating,
@@ -54,6 +56,8 @@ export async function searchResorts(p: SearchParams = {}): Promise<Resort[]> {
 export const regions = () => Array.from(new Set(resorts.map((r) => r.region)));
 export const districts = (region?: string) =>
   Array.from(new Set(resorts.filter((r) => !region || r.region === region).map((r) => r.district)));
+
+export const LOCATION_TYPES: LocationType[] = ["mountain", "snow", "green", "water"];
 
 /** Mashhur hududlar (bosh sahifadagi chiplar) */
 export const popularAreas = ["Chorvoq", "Chimyon", "Zomin", "Bo‘stonliq", "Samarqand", "Farg‘ona"];

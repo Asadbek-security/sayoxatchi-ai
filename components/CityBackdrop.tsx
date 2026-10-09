@@ -1,6 +1,8 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useI18n, type DictKey } from "@/lib/i18n";
+import { LOCATION_PHOTOS, onScene } from "@/lib/scene";
+import type { LocationType } from "@/lib/types";
 
 // Fon: to‘rtta shahar — chap yuqoridan o‘ng pastga "/" bilan bo‘lingan diagonal lavhalar.
 // Rasmlar: Wikimedia Commons (mualliflar — PHOTO_CREDITS).
@@ -23,6 +25,15 @@ const W = 25; // har bir lavha kengligi, %
 export function CityBackdrop() {
   const { t } = useI18n();
   const ref = useRef<HTMLDivElement>(null);
+  const [scene, setSceneState] = useState<LocationType | null>(null);
+  const [loaded, setLoaded] = useState(false);
+
+  // Bosh sahifadagi lokatsiya bo‘limi fonni almashtiradi
+  useEffect(() => onScene((s) => {
+    if (s === "preload") { setLoaded(true); return; }
+    if (s) setLoaded(true);
+    setSceneState(s);
+  }), []);
 
   // Parallaks + hero’dan keyin shahar asta xiralashadi va qorayadi
   useEffect(() => {
@@ -47,6 +58,7 @@ export function CityBackdrop() {
 
   return (
     <div ref={ref} aria-hidden className="pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-bg-0 [--s:7] max-md:[--s:12]">
+      <div className="absolute inset-0 transition-opacity duration-[900ms] ease-[var(--ease)]" style={{ opacity: scene ? 0 : 1 }}>
       <div
         className="absolute inset-x-0 -top-10 -bottom-10 animate-[fade-in_900ms_var(--ease)_both]"
         style={{ transform: "translate3d(0, var(--py, 0px), 0)", filter: "blur(var(--bb, 0px))" }}
@@ -111,6 +123,21 @@ export function CityBackdrop() {
       {/* matn ostidagi qoraytirish */}
       <div className="city-scrim absolute inset-0" />
       <div className="absolute inset-0 bg-bg-0" style={{ opacity: "var(--dim, 0)" }} />
+      </div>
+
+      {/* lokatsiya fonlari — aniq (blur yo‘q), sekin "nafas oluvchi" zoom bilan almashadi */}
+      {loaded && (Object.keys(LOCATION_PHOTOS) as LocationType[]).map((k) => (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          key={k}
+          src={LOCATION_PHOTOS[k].src}
+          alt=""
+          decoding="async"
+          className="loc-photo absolute inset-0 size-full object-cover transition-[opacity,transform] duration-[1100ms] ease-[var(--ease)]"
+          style={{ objectPosition: LOCATION_PHOTOS[k].pos, opacity: scene === k ? 1 : 0, transform: scene === k ? "scale(1)" : "scale(1.06)" }}
+        />
+      ))}
+      <div className="loc-scrim absolute inset-0 transition-opacity duration-[900ms]" style={{ opacity: scene ? 1 : 0 }} />
       <Grain />
     </div>
   );

@@ -33,7 +33,11 @@ export interface Resort {
   main_problem: Topic | null;
   tags: Topic[];
   cover: Scene; // rasm o‘rniga chizilgan manzara
+  /** Lokatsiya turi (bosh sahifadagi kategoriyalar, qidiruv filtri) */
+  locations: LocationType[];
 }
+
+export type LocationType = "mountain" | "snow" | "green" | "water";
 
 export type Scene = "forest" | "lake" | "mountains" | "garden";
 

@@ -15,7 +15,7 @@ npm run dev      # http://localhost:3000
 
 | Yo'l | Ekran |
 |---|---|
-| `/` | Bosh sahifa: qidiruv kapsulasi, hududlar, Trust Orb, yaqinda ko‘rilganlar, mashhur maskanlar |
+| `/` | Bosh sahifa: qidiruv kapsulasi, hududlar, Trust Orb, yaqinda ko‘rilganlar, mashhur maskanlar, lokatsiya kategoriyalari (skroll bilan fon almashadi) |
 | `/search` | Qidiruv: viloyat, tuman, Trust Score slayderi, reyting, saralash (mobilda — bottom sheet) |
 | `/resort/[id]` | Maskan profili: Trust Orb, AI xulosa, 7 suyuq naycha, muammolar, mavzular balansi, ulashish |
 | `/resort/[id]/analysis` | AI tahlil paneli: bosqichlar, natija, oldingi tahlildan farq |
@@ -37,6 +37,10 @@ Trust Orb, suyuq naychalar, kartochkalar — `components/signature.tsx`, shahar 
 
 Fon rasmlari (Wikimedia Commons): Rabati Malik — Bernard Gagnon (CC0); Toshkent teleminorasi — Ruhshona Ozodova (CC BY 4.0);
 Xudoyorxon o‘rdasi — Bgag (CC0); Mulla Qirg‘iz madrasasi — Jamshid Nurkulov (CC BY-SA 4.0).
+Lokatsiya rasmlari: Toypan dovoni — Ivan Kondyukov (CC BY-SA 4.0); Amirsoy — WWELNUR (CC BY 4.0);
+Beldersoy vodiysi — German Stimban (CC BY-SA 4.0); Ispay sharsharasi — Dilmurad91 (CC BY-SA 4.0).
+
+Lokatsiya turi (`locations` maydoni: `mountain | snow | green | water`) — `lib/types.ts`, qidiruvda `?loc=` parametri.
 
 ## Backend dasturchisi uchun
 

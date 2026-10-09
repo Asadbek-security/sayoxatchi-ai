@@ -1,10 +1,10 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { useI18n } from "@/lib/i18n";
-import { districts, regions, searchResorts, type SearchParams } from "@/lib/api";
-import type { Resort } from "@/lib/types";
-import { IconFilter, IconSearch, IconStar } from "@/components/icons";
+import { useI18n, type DictKey } from "@/lib/i18n";
+import { districts, LOCATION_TYPES, regions, searchResorts, type SearchParams } from "@/lib/api";
+import type { LocationType, Resort } from "@/lib/types";
+import { IconFilter, IconSearch, IconStar, locationIcon } from "@/components/icons";
 import { ResortCard } from "@/components/signature";
 import { BottomSheet, Button, Chip, Condense, EmptyState, Field, Glass, Segmented, Select, Skeleton, fieldCls } from "@/components/ui";
 
@@ -16,6 +16,8 @@ export default function SearchView() {
   const [q, setQ] = useState(params.get("q") ?? "");
   const [region, setRegion] = useState(params.get("region") ?? "");
   const [district, setDistrict] = useState("");
+  const initLoc = params.get("loc");
+  const [loc, setLoc] = useState<LocationType | "">(LOCATION_TYPES.includes(initLoc as LocationType) ? (initLoc as LocationType) : "");
   const [minScore, setMinScore] = useState(0);
   const [minRating, setMinRating] = useState(0);
   const [sort, setSort] = useState<Sort>("score");
@@ -24,15 +26,25 @@ export default function SearchView() {
 
   useEffect(() => {
     setList(null);
-    const id = setTimeout(() => searchResorts({ q, region, district, minScore, minRating, sort }).then(setList), 200);
+    const id = setTimeout(() => searchResorts({ q, region, district, minScore, minRating, location: loc, sort }).then(setList), 200);
     return () => clearTimeout(id);
-  }, [q, region, district, minScore, minRating, sort]);
+  }, [q, region, district, minScore, minRating, loc, sort]);
 
-  const reset = () => { setQ(""); setRegion(""); setDistrict(""); setMinScore(0); setMinRating(0); setSort("score"); };
-  const activeFilters = [region, district, minScore, minRating].filter(Boolean).length;
+  const reset = () => { setQ(""); setLoc(""); setRegion(""); setDistrict(""); setMinScore(0); setMinRating(0); setSort("score"); };
+  const activeFilters = [loc, region, district, minScore, minRating].filter(Boolean).length;
 
   const filters = (
     <div className="space-y-6">
+      <div>
+        <span className="mb-3 block text-sm font-semibold text-hi">{t("search.location")}</span>
+        <div className="flex flex-wrap gap-2">
+          <Chip active={!loc} onClick={() => setLoc("")}>{t("loc.all")}</Chip>
+          {LOCATION_TYPES.map((k) => {
+            const Icon = locationIcon[k];
+            return <Chip key={k} active={loc === k} onClick={() => setLoc(k)}><Icon size={16} /> {t(`loc.${k}` as DictKey)}</Chip>;
+          })}
+        </div>
+      </div>
       <Field label={t("search.region")}>
         <Select value={region} onChange={(e) => { setRegion(e.target.value); setDistrict(""); }}>
           <option value="">{t("search.allRegions")}</option>

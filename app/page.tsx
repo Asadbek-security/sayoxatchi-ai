@@ -9,6 +9,7 @@ import { useRecent } from "@/lib/store";
 import type { AiAnalysis, Resort } from "@/lib/types";
 import { IconAdMatch, IconArrowRight, IconRecent, IconReliability, IconSearch, IconSuspicious } from "@/components/icons";
 import { ResortCard, TrustOrb } from "@/components/signature";
+import { LocationPicker } from "@/components/LocationPicker";
 import { Condense, EASE, Glass, ScoreBadge, SectionTitle, Skeleton } from "@/components/ui";
 
 export default function HomePage() {
@@ -154,6 +155,9 @@ export default function HomePage() {
           {popular ? popular.map((r, i) => <Condense key={r.id} i={i}><ResortCard r={r} /></Condense>) : [0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-[360px]" />)}
         </div>
       </section>
+
+      {/* LOKATSIYA KATEGORIYALARI — fon skroll bilan almashadi */}
+      <LocationPicker />
     </div>
   );
 }

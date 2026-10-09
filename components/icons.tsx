@@ -338,6 +338,45 @@ export const IconSpark = (p: IconProps) => (
   <Svg {...p}><path d="M12 3.5q.9 7.6 8.5 8.5-7.6.9-8.5 8.5-.9-7.6-8.5-8.5 7.6-.9 8.5-8.5z" fill="url(#ig-node)" strokeWidth="1.2" /></Svg>
 );
 
+/* ---------- Lokatsiya turlari ---------- */
+export const IconMountain = (p: IconProps) => (
+  <Svg {...p}>
+    <G d="M9 10l4 5H5z" />
+    <path d="M3 19.5l6-9.5 4 5.5 2.5-3 5.5 7z" />
+    <path d="M7.4 12.5L9 10l1.6 2.2" className="ico-move" />
+  </Svg>
+);
+export const IconSnow = (p: IconProps) => (
+  <Svg {...p}>
+    <G d="M12 9.5l2.2 1.25v2.5L12 14.5l-2.2-1.25v-2.5z" />
+    <path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9" />
+    <path d="M9.6 4.6L12 7l2.4-2.4M9.6 19.4L12 17l2.4 2.4" className="ico-move" />
+  </Svg>
+);
+export const IconTree = (p: IconProps) => (
+  <Svg {...p}>
+    <G d="M12 3.5l5 6.5H7z" />
+    <path d="M12 3l5.5 7h-3l4 5.5h-13l4-5.5h-3zM12 15.5V21" />
+    <path d="M9.5 21h5" className="ico-move" />
+  </Svg>
+);
+export const IconWaterfall = (p: IconProps) => (
+  <Svg {...p}>
+    <G d="M3 17.5q2-1.5 4.5 0t4.5 0 4.5 0 4.5 0V21H3z" />
+    <path d="M3.5 4h11a2 2 0 0 1 2 2v3" />
+    <path d="M8 4v10M11.5 4v9M15 9v5" className="ico-move" />
+    <path d="M3 18q2-1.5 4.5 0t4.5 0 4.5 0 4.5 0" />
+  </Svg>
+);
+
+/** Lokatsiya turi → ikonka */
+export const locationIcon = {
+  mountain: IconMountain,
+  snow: IconSnow,
+  green: IconTree,
+  water: IconWaterfall,
+} as const;
+
 /** Mavzu → ikonka */
 export const topicIcon: Record<Topic, (p: IconProps) => React.JSX.Element> = {
   cleanliness: IconClean,
