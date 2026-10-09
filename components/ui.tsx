@@ -1,177 +1,323 @@
 "use client";
 import Link from "next/link";
-import { AlertTriangle, ChevronRight, Info, MapPin, Star, Trees } from "lucide-react";
+import { useEffect, useId, useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
 import { useI18n, type DictKey } from "@/lib/i18n";
-import { levelColor, scoreLevel } from "@/lib/score";
-import type { Resort, Topic } from "@/lib/types";
+import { levelVar, scoreLevel } from "@/lib/score";
+import type { Topic } from "@/lib/types";
+import { IconAlert, IconClose, IconInfo, IconStar, LogoMark, topicIcon } from "./icons";
 
 export function cn(...c: (string | false | null | undefined)[]) {
   return c.filter(Boolean).join(" ");
 }
 
-export function Logo({ light = false }: { light?: boolean }) {
+export const EASE = [0.22, 1, 0.36, 1] as const;
+
+/* ---------- Shisha ---------- */
+type GlassProps = React.HTMLAttributes<HTMLDivElement> & {
+  level?: 1 | 2 | 3;
+  solid?: boolean;
+  sheen?: boolean;
+  as?: "div" | "section" | "article" | "aside";
+};
+export function Glass({ level = 2, solid, sheen, as: Tag = "div", className, ...p }: GlassProps) {
+  return <Tag {...p} className={cn("glass", `g${level}`, solid && "glass-solid", sheen && "sheen", className)} />;
+}
+
+/** Panel paydo bo‘lishi: blur 0 → qiymat, opacity, y +12 → 0 */
+export function Condense({ children, i = 0, className }: { children: React.ReactNode; i?: number; className?: string }) {
   return (
-    <Link href="/" className="flex items-center gap-2 font-extrabold tracking-tight">
-      <span className="grid size-9 place-items-center rounded-xl bg-brand-600 text-white shadow-sm">
-        <Trees className="size-5" />
-      </span>
-      <span className={cn("text-lg", light ? "text-white" : "text-brand-900")}>
-        SAYOXATCHI <span className="text-brand-500">AI</span>
-      </span>
-    </Link>
+    <motion.div
+      className={className}
+      initial={{ opacity: 0, y: 12 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ duration: 0.6, ease: EASE, delay: i * 0.06 }}
+    >
+      {children}
+    </motion.div>
   );
 }
 
-const levelKey = { good: "score.good", mid: "score.mid", bad: "score.bad", none: "score.none" } as const;
+/* ---------- Tugmalar ---------- */
+type BtnProps = React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "liquid" | "glass" | "ghost" | "danger"; size?: "sm" | "md" | "lg" };
+const btnBase = "inline-flex items-center justify-center gap-2 rounded-full font-semibold transition select-none disabled:cursor-not-allowed disabled:opacity-60";
+const btnSize = { sm: "h-9 px-3.5 text-[13px]", md: "h-11 px-5 text-sm", lg: "h-14 px-7 text-[15px]" };
+const btnVar = {
+  liquid: "btn-liquid",
+  glass: "glass g1 glass-hover text-hi hover:-translate-y-px",
+  ghost: "text-mid hover:text-hi hover:bg-[color:var(--glass-top)]",
+  danger: "glass g1 text-bad hover:-translate-y-px",
+};
+export function Button({ variant = "liquid", size = "md", className, ...p }: BtnProps) {
+  return <button {...p} className={cn(btnBase, btnSize[size], btnVar[variant], className)} />;
+}
+export function ButtonLink({ variant = "liquid", size = "md", className, ...p }: React.ComponentProps<typeof Link> & { variant?: BtnProps["variant"]; size?: BtnProps["size"] }) {
+  return <Link {...p} className={cn(btnBase, btnSize[size], btnVar[variant], className)} />;
+}
 
-/** Katta doira ko'rinishidagi Trust Score */
-export function ScoreRing({ score, size = 120 }: { score: number | null; size?: number }) {
-  const { t } = useI18n();
-  const lvl = scoreLevel(score);
-  const r = 44;
-  const c = 2 * Math.PI * r;
-  const pct = score ?? 0;
+/* ---------- Kiritish ---------- */
+export const fieldCls =
+  "h-12 w-full rounded-2xl border border-line bg-[color:var(--glass-bottom)] px-4 text-[15px] text-hi outline-none transition placeholder:text-low focus:border-[color:var(--mint)] focus:shadow-[0_0_0_4px_color-mix(in_srgb,var(--mint)_15%,transparent)]";
+
+export function Field({ label, error, children, hint }: { label: string; error?: string; hint?: string; children: React.ReactNode }) {
   return (
-    <div className="flex flex-col items-center gap-1">
-      <div className="relative" style={{ width: size, height: size }}>
-        <svg viewBox="0 0 100 100" className="size-full -rotate-90">
-          <circle cx="50" cy="50" r={r} fill="none" stroke="#e2efe7" strokeWidth="9" />
-          <circle cx="50" cy="50" r={r} fill="none" stroke={levelColor[lvl].stroke} strokeWidth="9" strokeLinecap="round"
-            strokeDasharray={c} strokeDashoffset={c - (c * pct) / 100} className="transition-[stroke-dashoffset] duration-700" />
-        </svg>
-        <div className="absolute inset-0 grid place-items-center text-center">
-          <div>
-            <div className={cn("font-extrabold leading-none", levelColor[lvl].text)} style={{ fontSize: size * 0.3 }}>
-              {score ?? "—"}
-            </div>
-            <div className="text-[11px] font-medium text-slate-500">/ 100</div>
-          </div>
-        </div>
-      </div>
-      <span className={cn("rounded-full px-2.5 py-0.5 text-xs font-semibold", levelColor[lvl].bg, levelColor[lvl].text)}>
-        {t(levelKey[lvl])}
-      </span>
-    </div>
+    <label className="block">
+      <span className="mb-2 block text-sm font-semibold text-hi">{label}</span>
+      {children}
+      {error ? <span role="alert" className="mt-1.5 flex items-center gap-1 text-xs font-medium text-bad"><IconAlert size={16} /> {error}</span>
+        : hint ? <span className="mt-1.5 block text-xs text-low">{hint}</span> : null}
+    </label>
   );
 }
 
-/** Kichik score belgisi (kartochkalar uchun) */
-export function ScorePill({ score }: { score: number | null }) {
-  const lvl = scoreLevel(score);
+export function Select({ className, ...p }: React.SelectHTMLAttributes<HTMLSelectElement>) {
   return (
-    <span className={cn("inline-flex items-center gap-1 rounded-lg px-2 py-1 text-sm font-bold", levelColor[lvl].bg, levelColor[lvl].text)}>
-      {score ?? "—"}
-      <span className="text-[10px] font-medium opacity-70">/100</span>
+    <span className={cn("relative block", className)}>
+      <select {...p} className={cn(fieldCls, "appearance-none pr-10 [&>option]:bg-[color:var(--bg-1)]")} />
+      <svg className="pointer-events-none absolute right-4 top-1/2 size-4 -translate-y-1/2 text-low" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M6 9l6 6 6-6" /></svg>
     </span>
   );
 }
 
-export function MetricBar({ label, value }: { label: string; value: number | null }) {
-  const { t } = useI18n();
-  const lvl = scoreLevel(value);
+/* ---------- Chip / Badge ---------- */
+export function Chip({ active, className, ...p }: React.ButtonHTMLAttributes<HTMLButtonElement> & { active?: boolean }) {
   return (
-    <div>
-      <div className="mb-1.5 flex items-center justify-between text-sm">
-        <span className="font-medium text-slate-700">{label}</span>
-        <span className={cn("font-bold", levelColor[lvl].text)}>{value ?? t("metric.noData")}</span>
-      </div>
-      <div className="h-2.5 overflow-hidden rounded-full bg-brand-50">
-        <div className={cn("h-full rounded-full transition-[width] duration-700", levelColor[lvl].bar)} style={{ width: `${value ?? 0}%` }} />
-      </div>
-    </div>
-  );
-}
-
-export function Stars({ value, size = "size-4" }: { value: number; size?: string }) {
-  return (
-    <span className="inline-flex" aria-label={`${value} / 5`}>
-      {[1, 2, 3, 4, 5].map((i) => (
-        <Star key={i} className={cn(size, i <= Math.round(value) ? "fill-amber-400 text-amber-400" : "text-slate-300")} />
-      ))}
-    </span>
+    <button
+      {...p}
+      aria-pressed={active}
+      className={cn(
+        "inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full px-4 text-sm font-medium transition",
+        active ? "bg-[color:var(--jade)] text-on-jade shadow-[0_6px_20px_-8px_var(--jade)]" : "glass g1 text-mid hover:text-hi",
+        className,
+      )}
+    />
   );
 }
 
 export function TopicChip({ topic, tone = "neutral" }: { topic: Topic; tone?: "good" | "bad" | "neutral" }) {
   const { t } = useI18n();
+  const Icon = topicIcon[topic];
   const tones = {
-    good: "bg-emerald-50 text-emerald-700 ring-emerald-200",
-    bad: "bg-red-50 text-red-700 ring-red-200",
-    neutral: "bg-slate-50 text-slate-600 ring-slate-200",
+    good: "text-good bg-[color:color-mix(in_srgb,var(--score-high)_12%,transparent)]",
+    bad: "text-bad bg-[color:color-mix(in_srgb,var(--score-low)_12%,transparent)]",
+    neutral: "text-mid bg-[color:var(--glass-top)]",
   };
-  return <span className={cn("rounded-full px-2.5 py-0.5 text-xs font-medium ring-1", tones[tone])}>{t(`topic.${topic}` as DictKey)}</span>;
+  return (
+    <span className={cn("inline-flex h-7 items-center gap-1 rounded-full pl-1.5 pr-2.5 text-xs font-medium", tones[tone])}>
+      <Icon size={16} /> {t(`topic.${topic}` as DictKey)}
+    </span>
+  );
 }
 
-/** Rasm o'rniga yashil gradient muqova */
-export function Cover({ gradient, className, children }: { gradient: string; className?: string; children?: React.ReactNode }) {
+const levelKey = { good: "score.good", mid: "score.mid", bad: "score.bad", none: "score.none" } as const;
+
+/** Kichik orb-badge (kartochkalar uchun) */
+export function ScoreBadge({ score, size = 52 }: { score: number | null; size?: number }) {
+  const lvl = scoreLevel(score);
+  const pct = score ?? 0;
+  const id = useId();
   return (
-    <div className={cn("relative overflow-hidden bg-gradient-to-br", gradient, className)}>
-      <svg viewBox="0 0 400 200" preserveAspectRatio="none" className="absolute inset-x-0 bottom-0 h-2/3 w-full opacity-30" aria-hidden>
-        <path d="M0 200 L0 120 L70 60 L130 110 L200 30 L270 100 L330 70 L400 120 L400 200 Z" fill="white" />
-        <path d="M0 200 L0 160 L90 120 L170 150 L260 110 L340 150 L400 140 L400 200 Z" fill="white" opacity="0.6" />
+    <span className="relative inline-grid shrink-0 place-items-center" style={{ width: size, height: size }} title={`Trust Score ${score ?? "—"}`}>
+      <svg viewBox="0 0 40 40" className="absolute inset-0 size-full" aria-hidden>
+        <defs>
+          <clipPath id={`c${id}`}><circle cx="20" cy="20" r="17" /></clipPath>
+        </defs>
+        <circle cx="20" cy="20" r="18.5" fill="rgba(3,17,13,.55)" stroke="rgba(255,255,255,.35)" strokeWidth="1" />
+        <rect clipPath={`url(#c${id})`} x="0" y={3 + 34 * (1 - pct / 100)} width="40" height="40" fill={levelVar[lvl]} opacity=".85" />
+        <ellipse cx="14" cy="11" rx="6" ry="3" fill="#fff" opacity=".25" />
       </svg>
-      {children}
+      <span className="num relative text-[15px] text-white drop-shadow-[0_1px_2px_rgba(0,0,0,.6)]">{score ?? "—"}</span>
+    </span>
+  );
+}
+
+export function LevelLabel({ score, className }: { score: number | null; className?: string }) {
+  const { t } = useI18n();
+  const lvl = scoreLevel(score);
+  return (
+    <span className={cn("inline-flex items-center gap-1.5 text-xs font-semibold", className)} style={{ color: levelVar[lvl] }}>
+      <span className="size-2 rounded-full" style={{ background: levelVar[lvl] }} />
+      {t(levelKey[lvl])}
+    </span>
+  );
+}
+
+export function Stars({ value, size = 16 }: { value: number; size?: number }) {
+  return (
+    <span className="inline-flex text-[color:var(--score-mid)]" role="img" aria-label={`${value} / 5`}>
+      {[1, 2, 3, 4, 5].map((i) => (
+        <span key={i} className={i <= Math.round(value) ? "" : "opacity-30"}><IconStar size={size} filled={i <= Math.round(value)} /></span>
+      ))}
+    </span>
+  );
+}
+
+/* ---------- Tooltip ---------- */
+export function Tooltip({ text, children }: { text: string; children: React.ReactNode }) {
+  const [open, setOpen] = useState(false);
+  const id = useId();
+  return (
+    <span className="relative inline-flex" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)} onFocus={() => setOpen(true)} onBlur={() => setOpen(false)}>
+      <span tabIndex={0} aria-describedby={id} className="inline-flex rounded-full">{children}</span>
+      <AnimatePresence>
+        {open && (
+          <motion.span
+            id={id}
+            role="tooltip"
+            initial={{ opacity: 0, y: 4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 4 }}
+            transition={{ duration: 0.16, ease: EASE }}
+            className="glass g1 glass-solid absolute bottom-full left-1/2 z-50 mb-2 w-max max-w-64 -translate-x-1/2 rounded-xl! px-3 py-2 text-xs font-medium text-hi"
+          >
+            {text}
+          </motion.span>
+        )}
+      </AnimatePresence>
+    </span>
+  );
+}
+
+/* ---------- Segmentlangan tablar ---------- */
+export function Segmented<T extends string>({ value, onChange, options, label, className }: {
+  value: T; onChange: (v: T) => void; options: { value: T; label: React.ReactNode }[]; label: string; className?: string;
+}) {
+  const id = useId();
+  return (
+    <div role="tablist" aria-label={label} className={cn("glass g1 inline-flex rounded-full p-1", className)}>
+      {options.map((o) => (
+        <button
+          key={o.value}
+          role="tab"
+          aria-selected={value === o.value}
+          onClick={() => onChange(o.value)}
+          className={cn("relative h-9 rounded-full px-3.5 text-[13px] font-semibold transition", value === o.value ? "text-on-jade" : "text-mid hover:text-hi")}
+        >
+          {value === o.value && (
+            <motion.span layoutId={`seg-${id}`} className="absolute inset-0 rounded-full bg-[color:var(--jade)]" transition={{ type: "spring", stiffness: 260, damping: 26 }} />
+          )}
+          <span className="relative">{o.label}</span>
+        </button>
+      ))}
     </div>
   );
 }
 
-export function ResortCard({ r }: { r: Resort }) {
+/* ---------- Bottom sheet (mobil) ---------- */
+export function BottomSheet({ open, onClose, title, children }: { open: boolean; onClose: () => void; title: string; children: React.ReactNode }) {
+  const { t } = useI18n();
+  useEffect(() => {
+    if (!open) return;
+    const on = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    window.addEventListener("keydown", on);
+    document.body.style.overflow = "hidden";
+    return () => { window.removeEventListener("keydown", on); document.body.style.overflow = ""; };
+  }, [open, onClose]);
+  return (
+    <AnimatePresence>
+      {open && (
+        <div className="fixed inset-0 z-[70]" role="dialog" aria-modal="true" aria-label={title}>
+          <motion.button aria-label={t("common.close")} className="absolute inset-0 bg-black/50" onClick={onClose} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} />
+          <motion.div
+            drag="y"
+            dragConstraints={{ top: 0, bottom: 0 }}
+            dragElastic={{ top: 0, bottom: 0.6 }}
+            onDragEnd={(_, i) => { if (i.offset.y > 120) onClose(); }}
+            initial={{ y: "100%" }}
+            animate={{ y: 0 }}
+            exit={{ y: "100%" }}
+            transition={{ type: "spring", stiffness: 260, damping: 30 }}
+            className="glass g3 glass-solid absolute inset-x-0 bottom-0 max-h-[85dvh] overflow-y-auto rounded-b-none! rounded-t-[32px]! px-5 pb-[calc(env(safe-area-inset-bottom)+24px)] pt-3 [--r:32px]"
+          >
+            <div className="mx-auto mb-4 h-1.5 w-10 rounded-full bg-[color:var(--text-low)]" />
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="font-display text-xl font-bold">{title}</h2>
+              <button onClick={onClose} aria-label={t("common.close")} className="grid size-11 place-items-center rounded-full text-mid hover:text-hi"><IconClose size={20} /></button>
+            </div>
+            {children}
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
+  );
+}
+
+/* ---------- Holatlar ---------- */
+export function Skeleton({ className }: { className?: string }) {
+  return <div className={cn("skeleton rounded-3xl", className)} />;
+}
+
+export function EmptyState({ icon, text, action }: { icon: React.ReactNode; text: string; action?: React.ReactNode }) {
+  return (
+    <Glass className="dash-empty flex flex-col items-center gap-4 px-6 py-14 text-center">
+      <span className="grid size-16 place-items-center rounded-2xl bg-[color:var(--glass-top)] text-mint">{icon}</span>
+      <p className="max-w-sm text-mid">{text}</p>
+      {action}
+    </Glass>
+  );
+}
+
+export function ErrorState({ onRetry }: { onRetry: () => void }) {
   const { t } = useI18n();
   return (
-    <Link href={`/resort/${r.id}`}
-      className="group flex flex-col overflow-hidden rounded-2xl border border-brand-100 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
-      <Cover gradient={r.cover} className="h-32">
-        <div className="absolute right-3 top-3"><ScorePill score={r.trust_score} /></div>
-      </Cover>
-      <div className="flex flex-1 flex-col gap-2 p-4">
-        <h3 className="font-bold text-brand-950">{r.name}</h3>
-        <p className="flex items-center gap-1 text-sm text-slate-500">
-          <MapPin className="size-3.5" /> {r.region}, {r.district}
-        </p>
-        <div className="flex items-center gap-2 text-sm">
-          <Stars value={r.rating} />
-          <span className="font-semibold">{r.rating}</span>
-          <span className="text-slate-400">· {r.review_count} {t("card.reviews")}</span>
-        </div>
-        <div className="mt-auto flex items-center justify-between gap-2 pt-2">
-          {r.main_problem ? (
-            <span className="flex items-center gap-1 text-xs text-amber-700">
-              <AlertTriangle className="size-3.5" /> {t("card.mainProblem")}: <b>{t(`topic.${r.main_problem}` as DictKey)}</b>
-            </span>
-          ) : (
-            <span className="text-xs text-slate-400">{t("score.none")}</span>
-          )}
-          <ChevronRight className="size-4 text-brand-400 transition group-hover:translate-x-0.5" />
-        </div>
-      </div>
-    </Link>
+    <Glass className="flex flex-col items-center gap-4 px-6 py-14 text-center">
+      <span className="grid size-16 place-items-center rounded-2xl text-bad" style={{ background: "color-mix(in srgb, var(--score-low) 14%, transparent)" }}><IconAlert size={32} /></span>
+      <p className="max-w-sm text-mid">{t("resort.errorLoad")}</p>
+      <Button variant="glass" onClick={onRetry}>{t("resort.retry")}</Button>
+    </Glass>
   );
 }
 
 export function Disclaimer({ className }: { className?: string }) {
   const { t } = useI18n();
   return (
-    <p className={cn("flex items-start gap-2 rounded-xl bg-brand-50 p-3 text-xs text-brand-800", className)}>
-      <Info className="mt-0.5 size-4 shrink-0" /> {t("home.disclaimer")}
+    <p className={cn("flex items-start gap-2 text-xs leading-relaxed text-low", className)}>
+      <IconInfo size={16} className="mt-px text-mint" /> {t("home.disclaimer")}
     </p>
   );
 }
 
-export function Card({ className, children }: { className?: string; children: React.ReactNode }) {
-  return <section className={cn("rounded-2xl border border-brand-100 bg-white p-5 shadow-sm", className)}>{children}</section>;
+export function SectionTitle({ icon, children, action, sub }: { icon?: React.ReactNode; children: React.ReactNode; action?: React.ReactNode; sub?: string }) {
+  return (
+    <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
+      <div>
+        <h2 className="flex items-center gap-2.5 font-display text-[22px] font-bold leading-tight md:text-[26px]">
+          {icon && <span className="text-mint">{icon}</span>}
+          {children}
+        </h2>
+        {sub && <p className="mt-1 text-sm text-low">{sub}</p>}
+      </div>
+      {action}
+    </div>
+  );
 }
 
-export function Button({ variant = "primary", className, ...p }: React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "primary" | "ghost" | "danger" }) {
-  const v = {
-    primary: "bg-brand-600 text-white hover:bg-brand-700 disabled:bg-brand-300",
-    ghost: "bg-white text-brand-700 ring-1 ring-brand-200 hover:bg-brand-50",
-    danger: "bg-white text-red-600 ring-1 ring-red-200 hover:bg-red-50",
-  };
-  return <button {...p} className={cn("inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition disabled:cursor-not-allowed", v[variant], className)} />;
+export function Logo() {
+  return (
+    <Link href="/" className="flex items-center gap-2.5 rounded-full pr-1" aria-label="SAYOXATCHI AI">
+      <LogoMark size={36} />
+      <span className="font-display text-[17px] font-extrabold tracking-tight text-hi">
+        SAYOXATCHI <span className="text-mint">AI</span>
+      </span>
+    </Link>
+  );
 }
 
-export function Skeleton({ className }: { className?: string }) {
-  return <div className={cn("animate-pulse rounded-xl bg-brand-100/60", className)} />;
+/** Kichik sparkline (admin KPI) */
+export function Sparkline({ data, color = "var(--mint)" }: { data: number[]; color?: string }) {
+  const max = Math.max(...data);
+  const min = Math.min(...data);
+  const pts = data.map((v, i) => `${(i / (data.length - 1)) * 100},${28 - ((v - min) / (max - min || 1)) * 24}`).join(" ");
+  return (
+    <svg viewBox="0 0 100 30" className="h-8 w-full" preserveAspectRatio="none" aria-hidden>
+      <polyline points={pts} fill="none" stroke={color} strokeWidth="2" vectorEffect="non-scaling-stroke" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
 }
 
-export const inputCls = "w-full rounded-xl border border-brand-200 bg-white px-3.5 py-2.5 text-sm outline-none transition placeholder:text-slate-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-100";
+export function useMounted() {
+  const [m, setM] = useState(false);
+  useEffect(() => setM(true), []);
+  return m;
+}

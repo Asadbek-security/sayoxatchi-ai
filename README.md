@@ -15,16 +15,28 @@ npm run dev      # http://localhost:3000
 
 | Yo'l | Ekran |
 |---|---|
-| `/` | Bosh sahifa: qidiruv, mashhur maskanlar, Trust Score izohi |
-| `/search` | Qidiruv: viloyat, min. score, saralash |
-| `/resort/[id]` | Maskan profili: Trust Score, AI xulosa, 7 ko'rsatkich, muammolar, sharhlar |
+| `/` | Bosh sahifa: qidiruv kapsulasi, hududlar, Trust Orb, yaqinda ko‘rilganlar, mashhur maskanlar |
+| `/search` | Qidiruv: viloyat, tuman, Trust Score slayderi, reyting, saralash (mobilda — bottom sheet) |
+| `/resort/[id]` | Maskan profili: Trust Orb, AI xulosa, 7 suyuq naycha, muammolar, mavzular balansi, ulashish |
+| `/resort/[id]/analysis` | AI tahlil paneli: bosqichlar, natija, oldingi tahlildan farq |
+| `/resort/[id]/reviews` | Barcha sharhlar: kayfiyat / mavzu / ishonchlilik filtrlari |
 | `/resort/[id]/review` | Sharh qoldirish formasi |
-| `/compare` | Reklama vs Real rasm tahlili |
+| `/compare` | Reklama vs Real: raqamlangan farq nuqtalari, mobilda slayder |
+| `/compare-resorts` | 2–3 maskanni yonma-yon solishtirish |
 | `/saved` | Saqlangan maskanlar |
-| `/profile` | Kirish / ro'yxatdan o'tish (maket) |
-| `/admin` | Admin: dashboard, maskanlar, sharhlar, rasmlar, AI jobs, foydalanuvchilar |
+| `/profile` | Kirish / ro‘yxatdan o‘tish (maket), saqlanganlar, sozlamalar |
+| `/admin` | Admin: dashboard, maskanlar, moderatsiya, rasmlar, AI jobs, foydalanuvchilar |
+| `/icons` | Ikonkalar tizimi (barcha o‘lcham va holatlar) |
 
-Til: o'zbekcha / ruscha (yuqori o'ng burchakdagi tugma). Tarjimalar — `lib/i18n.tsx`.
+Til: o‘zbekcha / ruscha. Mavzu: qorong‘i (asosiy) / yorug‘. Tarjimalar — `lib/i18n.tsx`.
+
+## Dizayn
+
+"Emerald liquid glass": dizayn tokenlari va shisha materiali — `app/globals.css`, o‘z ikonkalar to‘plami — `components/icons.tsx`,
+Trust Orb, suyuq naychalar, kartochkalar — `components/signature.tsx`, shahar foni — `components/CityBackdrop.tsx`.
+
+Fon rasmlari (Wikimedia Commons): Rabati Malik — Bernard Gagnon (CC0); Toshkent teleminorasi — Ruhshona Ozodova (CC BY 4.0);
+Xudoyorxon o‘rdasi — Bgag (CC0); Mulla Qirg‘iz madrasasi — Jamshid Nurkulov (CC BY-SA 4.0).
 
 ## Backend dasturchisi uchun
 
@@ -39,4 +51,4 @@ Til: o'zbekcha / ruscha (yuqori o'ng burchakdagi tugma). Tarjimalar — `lib/i18
 
 ## Texnologiyalar
 
-Next.js 15.5 (App Router) · React 19.1 · TypeScript · Tailwind CSS 4 · lucide-react
+Next.js 15.5 (App Router) · React 19.1 · TypeScript · Tailwind CSS 4 · Motion

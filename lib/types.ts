@@ -29,11 +29,13 @@ export interface Resort {
   rating: number; // foydalanuvchi reytingi, 1–5
   trust_score: number | null; // 0–100
   review_count: number;
-  price_from: number; // so'm, bir kecha
+  price_from: number; // so‘m, bir kecha
   main_problem: Topic | null;
   tags: Topic[];
-  cover: string; // gradient kaliti (rasm o'rniga)
+  cover: Scene; // rasm o‘rniga chizilgan manzara
 }
+
+export type Scene = "forest" | "lake" | "mountains" | "garden";
 
 export interface Review {
   id: string;
@@ -48,9 +50,13 @@ export interface Review {
   sentiment_score: number; // 0–1
   fake_probability: number; // 0–100
   topics: Topic[];
+  /** Nima uchun shubhali deb belgilangan (hukm emas, faqat indikator) */
+  flags: FlagReason[];
 }
 
-// null = "Ma'lumot yetarli emas"
+export type FlagReason = "duplicate" | "burst" | "no_details" | "extreme" | "new_account";
+
+// null = "Ma’lumot yetarli emas"
 export interface AiAnalysis {
   resort_id: string;
   reliability: number | null;
@@ -67,11 +73,24 @@ export interface AiAnalysis {
   problems: { topic: Topic; mentions: number }[];
   analyzed_reviews: number;
   updated_at: string;
+  /** Oldingi tahlil — "nima o‘zgardi" bloki uchun */
+  previous?: { overall: number | null; updated_at: string; metrics: Partial<Record<MetricName, number | null>> };
 }
+
+export type MetricName = "reliability" | "service" | "cleanliness" | "food" | "staff" | "price" | "ad_match";
+
+export interface TopicBalance {
+  topic: Topic;
+  positive: number;
+  negative: number;
+}
+
+/** Rasm ustidagi nuqta, foizda */
+export interface Pin { x: number; y: number }
 
 export interface ImageCompareResult {
   match_percent: number;
-  differences: { label: Localized; severity: "low" | "medium" | "high" }[];
+  differences: { label: Localized; severity: "low" | "medium" | "high"; ad: Pin; real: Pin }[];
   note: Localized;
 }
 

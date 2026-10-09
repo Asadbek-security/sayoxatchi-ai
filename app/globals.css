@@ -1,26 +1,450 @@
 @import "tailwindcss";
 
-@theme {
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --color-brand-50: #effaf4;
-  --color-brand-100: #d8f3e4;
-  --color-brand-200: #b3e6cb;
-  --color-brand-300: #7fd2ab;
-  --color-brand-400: #48b785;
-  --color-brand-500: #249b69;
-  --color-brand-600: #167d54;
-  --color-brand-700: #126446;
-  --color-brand-800: #11503a;
-  --color-brand-900: #0e4231;
-  --color-brand-950: #07251b;
+/* ============================================================
+   SAYOXATCHI AI — dizayn tokenlari
+   "Emerald liquid glass" · qorong‘i mavzu asosiy, yorug‘ mavzu ham bor
+   ============================================================ */
+
+@custom-variant light (&:where([data-theme="light"], [data-theme="light"] *));
+
+:root {
+  color-scheme: dark;
+  --bg-0: #03110d;
+  --bg-1: #062019;
+  --bg-2: #0a2e24;
+  --pine: #0e3b2f;
+  --jade: #16c79a;
+  --jade-400: #3ee0b0;
+  --mint: #8bf5d0;
+  --mint-100: #dffbef;
+  --aqua: #4fd8e8;
+  --lime: #d4f57a;
+  --lilac: #b9b3ff;
+  --accent: #8bf5d0; /* matn ichidagi urg‘u */
+  --on-jade: #03110d;
+
+  --text-hi: #effff8;
+  --text-mid: rgba(239, 255, 248, 0.74);
+  --text-low: rgba(239, 255, 248, 0.54);
+
+  --score-high: #5be38a;
+  --score-mid: #ffc24b;
+  --score-low: #ff6f61;
+  --info: #6bd6ff;
+
+  --glass-top: rgba(220, 255, 240, 0.12);
+  --glass-bottom: rgba(220, 255, 240, 0.04);
+  --glass-solid: rgba(6, 30, 23, 0.74);
+  --glass-solid-strong: rgba(6, 30, 23, 0.94);
+  --rim-hi: rgba(255, 255, 255, 0.5);
+  --line: rgba(223, 251, 239, 0.1);
+  --shadow-deep: 0 24px 60px -24px rgba(1, 15, 11, 0.75);
+  --inset-hi: rgba(255, 255, 255, 0.26);
+  --inset-lo: rgba(0, 0, 0, 0.25);
+
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --blur-scale: 1;
 }
 
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg-0: #eef7f2;
+  --bg-1: #e2f1ea;
+  --bg-2: #d3eadf;
+  --pine: #bcdccd;
+  --jade: #0e9f7a;
+  --jade-400: #12b58b;
+  --mint: #0b7f62;
+  --mint-100: #072a21;
+  --aqua: #1a9fb0;
+  --accent: #0b7f62;
+  --on-jade: #ffffff;
+
+  --text-hi: #072a21;
+  --text-mid: rgba(7, 42, 33, 0.76);
+  --text-low: rgba(7, 42, 33, 0.58);
+
+  --score-high: #178a47;
+  --score-mid: #a76a0c;
+  --score-low: #c8402f;
+  --info: #13799f;
+
+  --glass-top: rgba(255, 255, 255, 0.66);
+  --glass-bottom: rgba(255, 255, 255, 0.44);
+  --glass-solid: rgba(255, 255, 255, 0.8);
+  --glass-solid-strong: rgba(255, 255, 255, 0.96);
+  --rim-hi: rgba(255, 255, 255, 0.95);
+  --line: rgba(7, 42, 33, 0.1);
+  --shadow-deep: 0 24px 60px -28px rgba(7, 60, 44, 0.35);
+  --inset-hi: rgba(255, 255, 255, 0.9);
+  --inset-lo: rgba(7, 42, 33, 0.06);
+}
+
+@theme inline {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-manrope), var(--font-inter), ui-sans-serif, sans-serif;
+
+  --color-bg-0: var(--bg-0);
+  --color-bg-1: var(--bg-1);
+  --color-bg-2: var(--bg-2);
+  --color-pine: var(--pine);
+  --color-jade: var(--jade);
+  --color-jade-400: var(--jade-400);
+  --color-mint: var(--mint);
+  --color-aqua: var(--aqua);
+  --color-lime: var(--lime);
+  --color-accent: var(--accent);
+  --color-on-jade: var(--on-jade);
+  --color-hi: var(--text-hi);
+  --color-mid: var(--text-mid);
+  --color-low: var(--text-low);
+  --color-good: var(--score-high);
+  --color-warn: var(--score-mid);
+  --color-bad: var(--score-low);
+  --color-info: var(--info);
+  --color-line: var(--line);
+
+  --ease-glass: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@property --angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+@property --mx {
+  syntax: "<percentage>";
+  initial-value: 30%;
+  inherits: true;
+}
+@property --my {
+  syntax: "<percentage>";
+  initial-value: 0%;
+  inherits: true;
+}
+
+html {
+  background: var(--bg-0);
+}
 body {
-  background: #f6faf7;
-  color: #10231a;
+  color: var(--text-hi);
+  font-feature-settings: "cv11", "ss01";
+}
+
+.font-display {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+}
+.num {
+  font-family: var(--font-display);
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--jade) 40%, transparent);
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-brand-500);
-  outline-offset: 2px;
+  outline: 2px solid var(--mint);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--mint) 18%, transparent);
+  border-radius: 12px;
 }
+
+@layer components {
+/* ============================================================
+   Liquid glass material
+   ============================================================ */
+.glass {
+  --blur: 22px;
+  position: relative;
+  isolation: isolate;
+  border-radius: var(--r, 24px);
+  background: linear-gradient(180deg, var(--glass-top), var(--glass-bottom));
+  -webkit-backdrop-filter: blur(calc(var(--blur) * var(--blur-scale))) saturate(170%);
+  backdrop-filter: blur(calc(var(--blur) * var(--blur-scale))) saturate(170%);
+  box-shadow:
+    inset 0 1px 0 var(--inset-hi),
+    inset 0 -1px 0 var(--inset-lo),
+    var(--shadow-deep);
+  transition:
+    --mx 200ms var(--ease),
+    --my 200ms var(--ease),
+    transform 240ms var(--ease),
+    box-shadow 240ms var(--ease);
+}
+/* 1px gradient chet */
+.glass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 1;
+  background: conic-gradient(
+    from calc(var(--angle) + 200deg),
+    var(--rim-hi),
+    rgba(139, 245, 208, 0.18),
+    rgba(79, 216, 232, 0.32),
+    rgba(185, 179, 255, 0.16),
+    var(--rim-hi)
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0.7;
+  transition: opacity 240ms var(--ease);
+}
+/* kursorga ergashuvchi yaltirash */
+.glass::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 1;
+  background: radial-gradient(420px circle at var(--mx) var(--my), rgba(255, 255, 255, 0.13), transparent 45%);
+  mix-blend-mode: soft-light;
+}
+.glass > * {
+  position: relative;
+  z-index: 2;
+}
+.glass > .absolute { position: absolute; }
+
+.g1 { --blur: 14px; }
+.g2 { --blur: 22px; }
+.g3 {
+  --blur: 36px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--glass-top) 100%, white 4%), var(--glass-bottom));
+}
+
+/* zich ma’lumot uchun (jadval, uzun matn, admin) */
+.glass-solid {
+  background: var(--glass-solid);
+}
+
+/* iridessent tovlanish — faqat bir nechta asosiy elementda */
+.sheen::after {
+  background:
+    radial-gradient(420px circle at var(--mx) var(--my), rgba(255, 255, 255, 0.14), transparent 45%),
+    conic-gradient(
+      from var(--angle) at 70% 30%,
+      rgba(139, 245, 208, 0.16),
+      rgba(79, 216, 232, 0.16),
+      rgba(185, 179, 255, 0.12),
+      rgba(212, 245, 122, 0.1),
+      rgba(139, 245, 208, 0.16)
+    );
+}
+.sheen,
+.sheen::before,
+.sheen::after {
+  animation: sheen-spin 20s linear infinite;
+}
+@keyframes sheen-spin {
+  to { --angle: 360deg; }
+}
+
+.glass-hover:hover::before { opacity: 1; }
+
+/* Suyuq tugma (asosiy CTA) */
+.btn-liquid {
+  position: relative;
+  overflow: hidden;
+  color: var(--on-jade);
+  background: linear-gradient(180deg, var(--jade-400), var(--jade));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -2px 6px rgba(3, 17, 13, 0.25),
+    0 10px 30px -10px color-mix(in srgb, var(--jade) 70%, transparent);
+  transition: transform 160ms var(--ease), box-shadow 220ms var(--ease), filter 220ms var(--ease);
+}
+.btn-liquid::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, 0.45) 50%, transparent 65%);
+  transform: translateX(-120%);
+  pointer-events: none;
+}
+.btn-liquid:hover::after {
+  transform: translateX(120%);
+  transition: transform 700ms var(--ease);
+}
+.btn-liquid:active {
+  transform: scale(0.98);
+  box-shadow:
+    inset 0 2px 8px rgba(3, 17, 13, 0.35),
+    0 6px 18px -10px color-mix(in srgb, var(--jade) 70%, transparent);
+}
+.btn-liquid:disabled {
+  filter: grayscale(0.5) brightness(0.8);
+  cursor: not-allowed;
+}
+
+/* Skeleton — yalpiz rangli yaltirash */
+.skeleton {
+  background: linear-gradient(
+    100deg,
+    color-mix(in srgb, var(--mint) 6%, transparent) 30%,
+    color-mix(in srgb, var(--mint) 16%, transparent) 50%,
+    color-mix(in srgb, var(--mint) 6%, transparent) 70%
+  );
+  background-size: 300% 100%;
+  animation: shimmer 1.6s var(--ease) infinite;
+}
+@keyframes shimmer {
+  from { background-position: 100% 0; }
+  to { background-position: 0 0; }
+}
+
+/* Iridessent punktir chet (yuklash zonasi, shubhali sharh) */
+.dash-iri {
+  background-image:
+    repeating-linear-gradient(90deg, var(--mint) 0 8px, transparent 8px 16px),
+    repeating-linear-gradient(90deg, var(--aqua) 0 8px, transparent 8px 16px),
+    repeating-linear-gradient(0deg, var(--mint) 0 8px, transparent 8px 16px),
+    repeating-linear-gradient(0deg, var(--aqua) 0 8px, transparent 8px 16px);
+  background-size: 100% 1.5px, 100% 1.5px, 1.5px 100%, 1.5px 100%;
+  background-position: 0 0, 0 100%, 0 0, 100% 0;
+  background-repeat: no-repeat;
+  animation: dash-move 1.2s linear infinite;
+}
+@keyframes dash-move {
+  to { background-position: 16px 0, -16px 100%, 0 -16px, 100% 16px; }
+}
+.dash-amber {
+  outline: 1.5px dashed color-mix(in srgb, var(--score-mid) 70%, transparent);
+  outline-offset: -1.5px;
+}
+.dash-empty {
+  outline: 1.5px dashed var(--line);
+  outline-offset: -1.5px;
+}
+
+/* Range slider — suyuq slayder */
+.liquid-range {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 10px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--jade) var(--p, 0%), color-mix(in srgb, var(--mint) 12%, transparent) var(--p, 0%));
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+.liquid-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 35% 30%, #fff, var(--mint) 60%, var(--jade));
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35), inset 0 -2px 3px rgba(0, 0, 0, 0.15);
+  cursor: grab;
+}
+.liquid-range::-moz-range-thumb {
+  width: 24px;
+  height: 24px;
+  border: 0;
+  border-radius: 999px;
+  background: radial-gradient(circle at 35% 30%, #fff, var(--mint) 60%, var(--jade));
+}
+
+/* Ikonkalar */
+.ico { --icon-fill: 0.28; }
+.ico .ico-move { transition: transform 180ms var(--ease); transform-box: fill-box; transform-origin: center; }
+:where(a, button, label):hover > .ico .ico-move,
+.ico:hover .ico-move { transform: translateY(-1.5px) rotate(-6deg); }
+.ico-active { --icon-fill: 0.6; filter: drop-shadow(0 0 6px color-mix(in srgb, var(--mint) 55%, transparent)); }
+
+/* Suyuqlik to‘lqini */
+@keyframes wave-x {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.wave { animation: wave-x 6s linear infinite; }
+.wave-slow { animation: wave-x 10s linear infinite; }
+
+@keyframes fog-drift {
+  from { transform: translateX(-4%); }
+  to { transform: translateX(4%); }
+}
+
+@keyframes pulse-pin {
+  0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--mint) 60%, transparent); }
+  50% { box-shadow: 0 0 0 10px transparent; }
+}
+.pin-pulse { animation: pulse-pin 1.1s var(--ease) infinite; }
+
+} /* @layer components */
+
+/* Mobil — blur ~30% kamroq (tezlik uchun) */
+@media (max-width: 767px) {
+  :root { --blur-scale: 0.7; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .glass {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: var(--glass-solid-strong);
+  }
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass { background: var(--glass-solid-strong); }
+}
+
+/* gorizontal skroll yo‘q */
+html, body { overflow-x: clip; }
+
+/* ============================================================
+   Shahar foni
+   ============================================================ */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.city-photo {
+  filter: saturate(0.82) contrast(1.06) brightness(0.62);
+}
+.city-grade {
+  background:
+    radial-gradient(120% 70% at 20% 0%, rgba(22, 199, 154, 0.18), transparent 60%),
+    linear-gradient(135deg, rgba(14, 59, 47, 0.62), rgba(3, 17, 13, 0.4));
+  mix-blend-mode: multiply;
+}
+.city-fog {
+  background:
+    radial-gradient(40% 60% at 25% 70%, rgba(139, 245, 208, 0.1), transparent 70%),
+    radial-gradient(45% 55% at 70% 80%, rgba(79, 216, 232, 0.08), transparent 70%);
+  filter: blur(20px);
+  animation: fog-drift 28s ease-in-out infinite alternate;
+}
+.city-scrim {
+  background: linear-gradient(180deg, rgba(3, 17, 13, 0.55) 0%, rgba(3, 17, 13, 0.2) 32%, rgba(3, 17, 13, 0.55) 62%, rgba(3, 17, 13, 0.9) 100%);
+}
+[data-theme="light"] .city-photo {
+  filter: saturate(0.7) contrast(0.95) brightness(1.08);
+}
+[data-theme="light"] .city-grade {
+  background: linear-gradient(180deg, rgba(223, 251, 239, 0.35), rgba(190, 235, 215, 0.25));
+  mix-blend-mode: soft-light;
+}
+[data-theme="light"] .city-scrim {
+  background: linear-gradient(180deg, rgba(238, 247, 242, 0.7) 0%, rgba(238, 247, 242, 0.42) 32%, rgba(238, 247, 242, 0.7) 62%, rgba(238, 247, 242, 0.95) 100%);
+}
+
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
