@@ -417,12 +417,12 @@ html, body { overflow-x: clip; }
   to { opacity: 1; }
 }
 .city-photo {
-  filter: saturate(0.82) contrast(1.06) brightness(0.62);
+  filter: saturate(1.02) contrast(1.05) brightness(0.84);
 }
 .city-grade {
   background:
     radial-gradient(120% 70% at 20% 0%, rgba(22, 199, 154, 0.18), transparent 60%),
-    linear-gradient(135deg, rgba(14, 59, 47, 0.62), rgba(3, 17, 13, 0.4));
+    linear-gradient(135deg, rgba(14, 59, 47, 0.38), rgba(3, 17, 13, 0.18));
   mix-blend-mode: multiply;
 }
 .city-fog {
@@ -433,7 +433,9 @@ html, body { overflow-x: clip; }
   animation: fog-drift 28s ease-in-out infinite alternate;
 }
 .city-scrim {
-  background: linear-gradient(180deg, rgba(3, 17, 13, 0.55) 0%, rgba(3, 17, 13, 0.2) 32%, rgba(3, 17, 13, 0.55) 62%, rgba(3, 17, 13, 0.9) 100%);
+  background:
+    linear-gradient(90deg, rgba(3, 17, 13, 0.55) 0%, rgba(3, 17, 13, 0.18) 55%, transparent 80%),
+    linear-gradient(180deg, rgba(3, 17, 13, 0.45) 0%, rgba(3, 17, 13, 0.08) 30%, rgba(3, 17, 13, 0.3) 65%, rgba(3, 17, 13, 0.85) 100%);
 }
 [data-theme="light"] .city-photo {
   filter: saturate(0.7) contrast(0.95) brightness(1.08);

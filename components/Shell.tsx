@@ -6,7 +6,7 @@ import { useI18n, type DictKey } from "@/lib/i18n";
 import { useTheme } from "@/lib/theme";
 import { useCompare } from "@/lib/store";
 import {
-  IconClose, IconCompareResorts, IconDashboard, IconHome, IconImage, IconMoon, IconProfile, IconSaved, IconSearch, IconSun,
+  IconClose, IconCompareResorts, IconDashboard, IconHome, IconImage, IconMoon, IconProfile, IconSaved, IconSearch, IconSun, IconTrust,
   type IconProps,
 } from "./icons";
 import { PHOTO_CREDITS } from "./CityBackdrop";
@@ -19,6 +19,7 @@ const desktopNav: NavItem[] = [
   { href: "/search", key: "nav.search", icon: IconSearch },
   { href: "/compare", key: "nav.compare", icon: IconImage },
   { href: "/compare-resorts", key: "nav.versus", icon: IconCompareResorts },
+  { href: "/trust-score", key: "nav.trust", icon: IconTrust },
   { href: "/saved", key: "nav.saved", icon: IconSaved },
 ];
 const tabNav: NavItem[] = [
@@ -69,11 +70,11 @@ export function Header() {
           {desktopNav.map((n) => {
             const active = isActive(path, n.href);
             return (
-              <Link key={n.href} href={n.href} aria-current={active ? "page" : undefined}
-                className={cn("relative flex h-11 items-center gap-2 rounded-full px-3.5 text-sm font-medium transition", active ? "text-hi" : "text-mid hover:text-hi")}>
+              <Link key={n.href} href={n.href} aria-current={active ? "page" : undefined} aria-label={t(n.key)} title={t(n.key)}
+                className={cn("relative flex h-11 items-center gap-2 whitespace-nowrap rounded-full px-3 text-sm font-medium transition min-[1360px]:px-3.5", active ? "text-hi" : "text-mid hover:text-hi")}>
                 {active && <motion.span layoutId="nav-pill" className="absolute inset-0 rounded-full bg-[color:var(--glass-top)] ring-1 ring-[color:var(--line)]" transition={{ type: "spring", stiffness: 260, damping: 26 }} />}
                 <n.icon size={20} active={active} className="relative" />
-                <span className="relative">{t(n.key)}</span>
+                <span className="relative hidden min-[1360px]:inline">{t(n.key)}</span>
               </Link>
             );
           })}
@@ -159,6 +160,7 @@ export function Footer() {
           <Disclaimer className="max-w-md" />
           <p className="text-xs text-low">© 2026 SAYOXATCHI AI · {t("footer.made")}</p>
           <div className="flex gap-4 text-xs font-medium text-mid">
+            <Link href="/trust-score" className="hover:text-hi">{t("nav.trust")}</Link>
             <Link href="/icons" className="hover:text-hi">{t("nav.icons")}</Link>
             <Link href="/admin" className="hover:text-hi">{t("nav.admin")}</Link>
           </div>

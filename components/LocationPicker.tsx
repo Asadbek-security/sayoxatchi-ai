@@ -10,10 +10,10 @@ import { IconArrowRight, locationIcon } from "./icons";
 import { ButtonLink, cn, EASE, Glass, ScoreBadge } from "./ui";
 
 /**
- * "Qayerda dam olmoqchisiz?" — lokatsiya kategoriyalari.
- * Har bir kategoriya — to‘liq ekranli "slayd"; u ekran markaziga kelganda butun sayt foni shu manzaraga almashadi.
+ * Lokatsiyalar bo‘ylab "skrollitelling": har bir kategoriya — to‘liq ekranli slayd;
+ * u ekran markaziga kelganda butun sayt foni shu manzaraga almashadi.
  */
-export function LocationPicker() {
+export function LocationStory() {
   const { t } = useI18n();
   const [resorts, setResorts] = useState<Resort[]>([]);
   const [active, setActive] = useState<LocationType | null>(null);
@@ -64,40 +64,9 @@ export function LocationPicker() {
   const goTo = (k: LocationType) => slides.current[k]?.scrollIntoView({ behavior: "smooth", block: "center" });
 
   return (
-    <section ref={section} id="locations" aria-labelledby="loc-title">
-      <div className="mb-8">
-        <h2 id="loc-title" className="font-display text-[30px] font-extrabold leading-tight md:text-5xl">{t("loc.title")}</h2>
-        <p className="mt-2 max-w-2xl text-lg text-mid">{t("loc.sub")}</p>
-      </div>
-
-      {/* Kategoriya plitkalari — manzara rasmi bilan */}
-      <div className="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-4">
-        {LOCATION_TYPES.map((k, i) => {
-          const Icon = locationIcon[k];
-          const n = resorts.filter((r) => r.locations.includes(k)).length;
-          return (
-            <motion.div key={k} initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, ease: EASE, delay: i * 0.06 }}>
-              <Link href={`/search?loc=${k}`} className="glass g2 glass-hover group relative block aspect-[3/4] overflow-hidden p-0 sm:aspect-[4/5]">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={LOCATION_PHOTOS[k].src} alt={`${t(`loc.${k}` as DictKey)} — ${LOCATION_PHOTOS[k].place}`} loading="lazy" decoding="async"
-                  className="absolute inset-0 size-full rounded-[24px] object-cover transition-transform duration-700 group-hover:scale-[1.05]" style={{ objectPosition: LOCATION_PHOTOS[k].pos }} />
-                <span className="absolute inset-0 rounded-[24px] bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
-                <span className="absolute inset-x-3 bottom-3 flex items-end justify-between gap-2 md:inset-x-4 md:bottom-4">
-                  <span>
-                    <span className="mb-2 grid size-10 place-items-center rounded-2xl bg-white/15 text-white backdrop-blur-md"><Icon size={20} /></span>
-                    <span className="block font-display text-[17px] font-bold leading-tight text-white md:text-xl">{t(`loc.${k}` as DictKey)}</span>
-                    <span className="text-xs text-white/75"><span className="num">{n}</span> {t("loc.count")}</span>
-                  </span>
-                  <span className="grid size-9 shrink-0 place-items-center rounded-full bg-white/15 text-white backdrop-blur-md transition group-hover:bg-white/30"><IconArrowRight size={16} /></span>
-                </span>
-              </Link>
-            </motion.div>
-          );
-        })}
-      </div>
-
+    <section ref={section} id="locations" aria-label={t("loc.title")}>
       {/* Mobil: yopishqoq kategoriya chiplari */}
-      <div className="sticky top-[84px] z-30 mt-10 lg:hidden">
+      <div className="sticky top-[84px] z-30 lg:hidden">
         <div ref={chipBar} className="glass g1 glass-solid no-scrollbar mx-auto flex w-fit max-w-full gap-1 overflow-x-auto rounded-full! p-1 [--r:999px]">
           {LOCATION_TYPES.map((k) => {
             const Icon = locationIcon[k];
@@ -139,6 +108,48 @@ export function LocationPicker() {
           </ol>
         </nav>
       </div>
+    </section>
+  );
+}
+
+/** "Qayerda dam olmoqchisiz?" — manzara rasmli kategoriya plitkalari (bosish → qidiruv filtri) */
+export function LocationTiles() {
+  const { t } = useI18n();
+  const [resorts, setResorts] = useState<Resort[]>([]);
+  useEffect(() => { searchResorts().then(setResorts); }, []);
+  return (
+    <section aria-labelledby="loc-title">
+      <div className="mb-8">
+        <h2 id="loc-title" className="font-display text-[30px] font-extrabold leading-tight md:text-5xl">{t("loc.title")}</h2>
+        <p className="mt-2 max-w-2xl text-lg text-mid">{t("loc.sub")}</p>
+      </div>
+
+      {/* Kategoriya plitkalari — manzara rasmi bilan */}
+      <div className="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-4">
+        {LOCATION_TYPES.map((k, i) => {
+          const Icon = locationIcon[k];
+          const n = resorts.filter((r) => r.locations.includes(k)).length;
+          return (
+            <motion.div key={k} initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, ease: EASE, delay: i * 0.06 }}>
+              <Link href={`/search?loc=${k}`} className="glass g2 glass-hover group relative block aspect-[3/4] overflow-hidden p-0 sm:aspect-[4/5]">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={LOCATION_PHOTOS[k].src} alt={`${t(`loc.${k}` as DictKey)} — ${LOCATION_PHOTOS[k].place}`} loading="lazy" decoding="async"
+                  className="absolute inset-0 size-full rounded-[24px] object-cover transition-transform duration-700 group-hover:scale-[1.05]" style={{ objectPosition: LOCATION_PHOTOS[k].pos }} />
+                <span className="absolute inset-0 rounded-[24px] bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
+                <span className="absolute inset-x-3 bottom-3 flex items-end justify-between gap-2 md:inset-x-4 md:bottom-4">
+                  <span>
+                    <span className="mb-2 grid size-10 place-items-center rounded-2xl bg-white/15 text-white backdrop-blur-md"><Icon size={20} /></span>
+                    <span className="block font-display text-[17px] font-bold leading-tight text-white md:text-xl">{t(`loc.${k}` as DictKey)}</span>
+                    <span className="text-xs text-white/75"><span className="num">{n}</span> {t("loc.count")}</span>
+                  </span>
+                  <span className="grid size-9 shrink-0 place-items-center rounded-full bg-white/15 text-white backdrop-blur-md transition group-hover:bg-white/30"><IconArrowRight size={16} /></span>
+                </span>
+              </Link>
+            </motion.div>
+          );
+        })}
+      </div>
+
     </section>
   );
 }

@@ -4,20 +4,20 @@ import { useI18n, type DictKey } from "@/lib/i18n";
 import { LOCATION_PHOTOS, onScene } from "@/lib/scene";
 import type { LocationType } from "@/lib/types";
 
-// Fon: to‘rtta shahar — chap yuqoridan o‘ng pastga "/" bilan bo‘lingan diagonal lavhalar.
+// Fon: to‘rtta dam olish zonasi — chap yuqoridan o‘ng pastga "/" bilan bo‘lingan diagonal lavhalar.
 // Rasmlar: Wikimedia Commons (mualliflar — PHOTO_CREDITS).
 export const CITIES: { key: DictKey; src: string; pos: string }[] = [
-  { key: "city.navoiy", src: "/bg/navoiy.webp", pos: "50% 45%" },
-  { key: "city.toshkent", src: "/bg/toshkent.webp", pos: "62% 30%" },
-  { key: "city.fargona", src: "/bg/fargona.webp", pos: "50% 50%" },
-  { key: "city.namangan", src: "/bg/namangan.webp", pos: "55% 45%" },
+  { key: "zone.chimyon", src: "/bg/chimyon.webp", pos: "45% 50%" },
+  { key: "zone.chorvoq", src: "/bg/chorvoq.webp", pos: "55% 55%" },
+  { key: "zone.urungach", src: "/bg/urungach.webp", pos: "50% 45%" },
+  { key: "zone.aydarkul", src: "/bg/aydarkul.webp", pos: "50% 55%" },
 ];
 
 export const PHOTO_CREDITS = [
-  { place: "Rabati Malik, Navoiy", author: "Bernard Gagnon", license: "CC0", url: "https://commons.wikimedia.org/wiki/File:Rabati_Malik_caravanserai_03.jpg" },
-  { place: "Teleminora, Toshkent", author: "Ruhshona Ozodova", license: "CC BY 4.0", url: "https://commons.wikimedia.org/wiki/File:Tungi_teleminora.jpg" },
-  { place: "Xudoyorxon o‘rdasi, Qo‘qon", author: "Bgag", license: "CC0", url: "https://commons.wikimedia.org/wiki/File:Palace_of_Khudayar_Khan.jpg" },
-  { place: "Mulla Qirg‘iz madrasasi, Namangan", author: "Jamshid Nurkulov", license: "CC BY-SA 4.0", url: "https://commons.wikimedia.org/wiki/File:Mulla_Qirg%CA%BBiz_madrasasi_01.jpg" },
+  { place: "Chimyon", author: "LBM1948", license: "CC BY-SA 4.0", url: "https://commons.wikimedia.org/wiki/File:Chimgan_09.jpg" },
+  { place: "Chorvoq suv ombori", author: "Muxriddin Azimov", license: "CC0", url: "https://commons.wikimedia.org/wiki/File:Chorvoq_suv_ombori_20230420.jpg" },
+  { place: "Yuqori Urungach", author: "AnastasiyaPunko", license: "CC BY-SA 4.0", url: "https://commons.wikimedia.org/wiki/File:UpperUrungach_2.jpg" },
+  { place: "Aydarko‘l", author: "Galiev Yaroslav", license: "CC BY-SA 4.0", url: "https://commons.wikimedia.org/wiki/File:%D0%97%D0%B0%D0%BA%D0%B0%D1%82_%D0%BD%D0%B0_%D0%BE%D0%B7%D0%B5%D1%80%D0%B5_%D0%90%D0%B9%D0%B4%D0%B0%D1%80%D0%BA%D1%83%D0%BB%D1%8C.jpg" },
 ];
 
 const W = 25; // har bir lavha kengligi, %
@@ -102,7 +102,7 @@ export function CityBackdrop() {
           ))}
         </svg>
 
-        {/* shahar nomlari — "/ TOSHKENT" */}
+        {/* zona nomlari — "/ CHORVOQ" */}
         <div className="absolute inset-x-0 top-[132px] hidden md:block">
           {CITIES.map((c, i) => (
             <span

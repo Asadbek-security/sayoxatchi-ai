@@ -15,7 +15,8 @@ npm run dev      # http://localhost:3000
 
 | Yo'l | Ekran |
 |---|---|
-| `/` | Bosh sahifa: qidiruv kapsulasi, hududlar, Trust Orb, yaqinda ko‘rilganlar, mashhur maskanlar, lokatsiya kategoriyalari (skroll bilan fon almashadi) |
+| `/` | Bosh sahifa: kutib olish ekrani (qidiruv, Trust Orb), so‘ng lokatsiyalar bo‘ylab skroll (fon almashadi), pastda “Qayerda dam olmoqchisiz?” va yaqinda ko‘rilganlar |
+| `/trust-score` | Trust Score qanday ishlaydi, ko‘rsatkichlar og‘irligi, baholash shkalasi, mashhur maskanlar |
 | `/search` | Qidiruv: viloyat, tuman, Trust Score slayderi, reyting, saralash (mobilda — bottom sheet) |
 | `/resort/[id]` | Maskan profili: Trust Orb, AI xulosa, 7 suyuq naycha, muammolar, mavzular balansi, ulashish |
 | `/resort/[id]/analysis` | AI tahlil paneli: bosqichlar, natija, oldingi tahlildan farq |
@@ -35,8 +36,8 @@ Til: o‘zbekcha / ruscha. Mavzu: qorong‘i (asosiy) / yorug‘. Tarjimalar —
 "Emerald liquid glass": dizayn tokenlari va shisha materiali — `app/globals.css`, o‘z ikonkalar to‘plami — `components/icons.tsx`,
 Trust Orb, suyuq naychalar, kartochkalar — `components/signature.tsx`, shahar foni — `components/CityBackdrop.tsx`.
 
-Fon rasmlari (Wikimedia Commons): Rabati Malik — Bernard Gagnon (CC0); Toshkent teleminorasi — Ruhshona Ozodova (CC BY 4.0);
-Xudoyorxon o‘rdasi — Bgag (CC0); Mulla Qirg‘iz madrasasi — Jamshid Nurkulov (CC BY-SA 4.0).
+Fon rasmlari (Wikimedia Commons): Chimyon — LBM1948 (CC BY-SA 4.0); Chorvoq suv ombori — Muxriddin Azimov (CC0);
+Yuqori Urungach — AnastasiyaPunko (CC BY-SA 4.0); Aydarko‘l — Galiev Yaroslav (CC BY-SA 4.0).
 Lokatsiya rasmlari: Toypan dovoni — Ivan Kondyukov (CC BY-SA 4.0); Amirsoy — WWELNUR (CC BY 4.0);
 Beldersoy vodiysi — German Stimban (CC BY-SA 4.0); Ispay sharsharasi — Dilmurad91 (CC BY-SA 4.0).
 

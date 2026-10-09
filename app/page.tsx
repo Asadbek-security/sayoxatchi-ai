@@ -4,13 +4,13 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion, useScroll, useTransform, useReducedMotion } from "motion/react";
 import { useI18n } from "@/lib/i18n";
-import { getAnalysis, getResortsByIds, popularAreas, regions, searchResorts } from "@/lib/api";
+import { getAnalysis, getResortsByIds, popularAreas, regions } from "@/lib/api";
 import { useRecent } from "@/lib/store";
 import type { AiAnalysis, Resort } from "@/lib/types";
-import { IconAdMatch, IconArrowRight, IconRecent, IconReliability, IconSearch, IconSuspicious } from "@/components/icons";
-import { ResortCard, TrustOrb } from "@/components/signature";
-import { LocationPicker } from "@/components/LocationPicker";
-import { Condense, EASE, Glass, ScoreBadge, SectionTitle, Skeleton } from "@/components/ui";
+import { IconArrowRight, IconRecent, IconSearch, IconTrust } from "@/components/icons";
+import { TrustOrb } from "@/components/signature";
+import { LocationStory, LocationTiles } from "@/components/LocationPicker";
+import { EASE, Glass, ScoreBadge, SectionTitle, Skeleton } from "@/components/ui";
 
 export default function HomePage() {
   const { t } = useI18n();
@@ -18,7 +18,6 @@ export default function HomePage() {
   const reduce = useReducedMotion();
   const [q, setQ] = useState("");
   const [region, setRegion] = useState("");
-  const [popular, setPopular] = useState<Resort[] | null>(null);
   const [demo, setDemo] = useState<AiAnalysis | null>(null);
   const recent = useRecent();
   const [recentList, setRecentList] = useState<Resort[]>([]);
@@ -26,7 +25,6 @@ export default function HomePage() {
   const orbY = useTransform(scrollY, [0, 600], [0, reduce ? 0 : -60]);
 
   useEffect(() => {
-    searchResorts({ sort: "rating" }).then((r) => setPopular(r.slice(0, 4)));
     getAnalysis("yashil-vodiy").then(setDemo);
   }, []);
   useEffect(() => { getResortsByIds(recent.ids).then(setRecentList); }, [recent.ids]);
@@ -38,14 +36,9 @@ export default function HomePage() {
     router.push(`/search${p.size ? `?${p}` : ""}`);
   };
 
-  const steps = [
-    { icon: IconReliability, t: t("home.how1.t"), d: t("home.how1.d") },
-    { icon: IconSuspicious, t: t("home.how2.t"), d: t("home.how2.d") },
-    { icon: IconAdMatch, t: t("home.how3.t"), d: t("home.how3.d") },
-  ];
 
   return (
-    <div className="space-y-24">
+    <div className="space-y-16">
       {/* HERO */}
       <section className="grid min-h-[calc(100dvh-140px)] grid-cols-1 items-center gap-10 pb-6 lg:grid-cols-12">
         <div className="min-w-0 lg:col-span-7">
@@ -103,12 +96,23 @@ export default function HomePage() {
           <Glass level={3} className="relative flex flex-col items-center px-8 pb-6 pt-8 lg:mt-24 lg:translate-x-4">
             <span className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-low">Trust Score</span>
             {demo ? <TrustOrb score={demo.overall} confidence={demo.confidence} size={232} caption={t("home.orbCaption")} /> : <Skeleton className="size-56 rounded-full" />}
-            <Link href="/resort/yashil-vodiy" className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-mint hover:underline">
-              {t("card.details")} <IconArrowRight size={16} />
-            </Link>
+            <div className="mt-4 flex flex-col items-center gap-1">
+              <Link href="/resort/yashil-vodiy" className="inline-flex h-10 items-center gap-1.5 text-sm font-semibold text-mint hover:underline">
+                {t("card.details")} <IconArrowRight size={16} />
+              </Link>
+              <Link href="/trust-score" className="inline-flex h-9 items-center gap-1.5 text-xs font-medium text-mid hover:text-hi">
+                <IconTrust size={16} /> {t("home.howLink")}
+              </Link>
+            </div>
           </Glass>
         </motion.div>
       </section>
+
+      {/* LOKATSIYALAR — birinchi skrolldan fon almashadi */}
+      <LocationStory />
+
+      {/* QAYERDA DAM OLMOQCHISIZ? — sahifa oxirida */}
+      <LocationTiles />
 
       {/* YAQINDA KO‘RILGANLAR */}
       {recentList.length > 0 && (
@@ -130,47 +134,10 @@ export default function HomePage() {
         </section>
       )}
 
-      {/* QANDAY ISHLAYDI */}
-      <section>
-        <SectionTitle>{t("home.how")}</SectionTitle>
-        <div className="grid gap-4 md:grid-cols-3">
-          {steps.map((s, i) => (
-            <Condense key={i} i={i}>
-              <Glass className="h-full p-7">
-                <HeroIconTile><s.icon size={32} active /></HeroIconTile>
-                <h3 className="mt-6 font-display text-xl font-bold text-hi">{s.t}</h3>
-                <p className="mt-2 leading-relaxed text-mid">{s.d}</p>
-              </Glass>
-            </Condense>
-          ))}
-        </div>
-      </section>
-
-      {/* MASHHUR */}
-      <section>
-        <SectionTitle action={<Link href="/search" className="inline-flex h-11 items-center gap-1.5 text-sm font-semibold text-mint hover:underline">{t("home.all")} <IconArrowRight size={16} /></Link>}>
-          {t("home.popular")}
-        </SectionTitle>
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {popular ? popular.map((r, i) => <Condense key={r.id} i={i}><ResortCard r={r} /></Condense>) : [0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-[360px]" />)}
-        </div>
-      </section>
-
-      {/* LOKATSIYA KATEGORIYALARI — fon skroll bilan almashadi */}
-      <LocationPicker />
     </div>
   );
 }
 
-/** 64–80px "qahramon" ikonka: muzlatilgan suyuq shisha plitka + iridessent chet */
-function HeroIconTile({ children }: { children: React.ReactNode }) {
-  return (
-    <span className="glass g3 sheen relative grid size-[72px] place-items-center rounded-[22px]! text-hi [--r:22px]">
-      <span className="absolute inset-2 rounded-[16px] bg-gradient-to-br from-[color:var(--mint)]/20 to-[color:var(--aqua)]/5" />
-      {children}
-    </span>
-  );
-}
 
 function StatsRow() {
   const { t } = useI18n();

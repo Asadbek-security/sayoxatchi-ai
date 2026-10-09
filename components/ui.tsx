@@ -297,7 +297,7 @@ export function Logo() {
   return (
     <Link href="/" className="flex items-center gap-2.5 rounded-full pr-1" aria-label="SAYOXATCHI AI">
       <LogoMark size={36} />
-      <span className="font-display text-[17px] font-extrabold tracking-tight text-hi">
+      <span className="whitespace-nowrap font-display text-[17px] font-extrabold tracking-tight text-hi">
         SAYOXATCHI <span className="text-mint">AI</span>
       </span>
     </Link>

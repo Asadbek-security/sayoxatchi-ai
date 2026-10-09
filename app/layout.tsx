@@ -27,7 +27,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="uz" data-theme="dark" className={`${inter.variable} ${manrope.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
-        <link rel="preload" as="image" href="/bg/toshkent.webp" />
+        <link rel="preload" as="image" href="/bg/chorvoq.webp" />
       </head>
       <body className="min-h-dvh font-sans text-[16px] antialiased">
         <ThemeProvider>
