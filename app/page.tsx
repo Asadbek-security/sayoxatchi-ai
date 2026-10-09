@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowRight, ImageIcon, MessageSquareText, Search, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowRight, ImageIcon, MessageSquareText, Search, ShieldCheck } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { searchResorts } from "@/lib/api";
 import type { Resort } from "@/lib/types";
@@ -31,10 +31,7 @@ export default function HomePage() {
           <path d="M0 200 L0 110 L120 40 L220 120 L340 20 L470 110 L590 50 L700 120 L800 70 L800 200Z" fill="white" />
         </svg>
         <div className="relative mx-auto max-w-3xl text-center">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold ring-1 ring-white/25">
-            <Sparkles className="size-3.5" /> {t("home.badge")}
-          </span>
-          <h1 className="mt-5 text-3xl font-extrabold leading-tight tracking-tight md:text-5xl">{t("home.title")}</h1>
+          <h1 className="text-3xl font-extrabold leading-tight tracking-tight md:text-5xl">{t("home.title")}</h1>
           <p className="mx-auto mt-4 max-w-xl text-brand-50/90 md:text-lg">{t("home.subtitle")}</p>
           <form
             onSubmit={(e) => { e.preventDefault(); router.push(`/search?q=${encodeURIComponent(q)}`); }}

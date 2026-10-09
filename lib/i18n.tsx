@@ -10,7 +10,6 @@ const uz = {
   "nav.profile": "Profil",
   "nav.admin": "Admin",
 
-  "home.badge": "Milliy AI Xakaton 2026",
   "home.title": "Dam olish maskanini tanlashdan oldin AI orqali tekshiring",
   "home.subtitle": "Reklama, sharhlar va real mijoz tajribasini bitta tushunarli bahoga birlashtiramiz.",
   "home.searchPlaceholder": "Maskan nomi yoki hudud, masalan: Bo'stonliq",
@@ -212,7 +211,6 @@ const ru: Record<DictKey, string> = {
   "nav.profile": "Профиль",
   "nav.admin": "Админ",
 
-  "home.badge": "Национальный AI-хакатон 2026",
   "home.title": "Проверьте место отдыха с помощью AI до того, как выбрать",
   "home.subtitle": "Объединяем рекламу, отзывы и реальный опыт гостей в одну понятную оценку.",
   "home.searchPlaceholder": "Название или район, например: Бостанлык",
