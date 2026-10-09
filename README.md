@@ -39,4 +39,4 @@ Til: o'zbekcha / ruscha (yuqori o'ng burchakdagi tugma). Tarjimalar — `lib/i18
 
 ## Texnologiyalar
 
-Next.js 15 (App Router) · React 19 · TypeScript · Tailwind CSS 4 · lucide-react
+Next.js 15.5 (App Router) · React 19.1 · TypeScript · Tailwind CSS 4 · lucide-react
