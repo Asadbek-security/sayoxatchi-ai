@@ -9,10 +9,11 @@ import { METRIC_KEYS } from "@/lib/score";
 import { useCompare, useRecent, useSaved } from "@/lib/store";
 import type { AiAnalysis, Resort, Review, TopicBalance } from "@/lib/types";
 import {
-  IconAdMatch, IconAlert, IconArrowRight, IconBack, IconCheck, IconCompareResorts, IconEdit, IconJobs, IconLink, IconLocation,
+  IconAdMatch, IconAlert, IconArrowRight, IconBack, IconCheck, IconCompareResorts, IconEdit, IconInfo, IconJobs, IconLink, IconLocation,
   IconRefresh, IconReliability, IconSaved, IconSend, IconShare, IconSummary, IconTrust, locationIcon,
 } from "@/components/icons";
-import { AnalysisSteps, LiquidTube, ReviewItem, Scene, TopicBalanceChart, TrustOrb } from "@/components/signature";
+import { AnalysisSteps, LiquidTube, ResortPhoto, ReviewItem, TopicBalanceChart, TrustOrb } from "@/components/signature";
+import { PHOTOS } from "@/lib/photos";
 import { ReviewForm } from "@/components/ReviewForm";
 import { Button, ButtonLink, cn, Condense, Disclaimer, EASE, ErrorState, Glass, LevelLabel, SectionTitle, Skeleton, Stars, TopicChip } from "@/components/ui";
 
@@ -51,7 +52,7 @@ export default function ResortPage() {
   if (resort === null) {
     return (
       <Glass className="mx-auto max-w-md p-10 text-center">
-        <p className="font-display text-xl font-bold">{t("resort.notFound")}</p>
+        <h1 className="font-display text-xl font-bold">{t("resort.notFound")}</h1>
         <ButtonLink href="/search" variant="glass" className="mt-5">{t("resort.back")}</ButtonLink>
       </Glass>
     );
@@ -70,8 +71,16 @@ export default function ResortPage() {
       {/* SARLAVHA — rasm shishaga "eriydi" */}
       <header className="glass g2 overflow-hidden rounded-[32px]! [--r:32px]">
         <div className="relative h-56 md:h-72">
-          <Scene type={resort.cover} seed={resort.id} className="absolute inset-0 size-full" />
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[color:var(--bg-1)]" />
+          <ResortPhoto r={resort} eager className="absolute inset-0 size-full" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-[color:var(--bg-1)]" />
+          <span className="absolute left-4 top-4 inline-flex h-8 items-center gap-1.5 rounded-full bg-black/40 px-3 text-xs font-semibold text-white backdrop-blur-md">
+            {t(resort.kind === "zone" ? "kind.zone" : "kind.resort")}
+          </span>
+          {PHOTOS[resort.id] && (
+            <a href={PHOTOS[resort.id].url} target="_blank" rel="noreferrer" className="absolute right-4 top-4 max-w-[60%] truncate rounded-full bg-black/40 px-3 py-1.5 text-[11px] text-white/85 backdrop-blur-md hover:text-white">
+              {t("resort.photoBy")}: {PHOTOS[resort.id].author} · {PHOTOS[resort.id].license}
+            </a>
+          )}
         </div>
         <div className="relative -mt-20 flex flex-col gap-5 px-5 pb-6 md:-mt-24 md:flex-row md:items-end md:justify-between md:px-8 md:pb-8">
           <div>
@@ -94,6 +103,10 @@ export default function ResortPage() {
           </div>
         </div>
       </header>
+
+      <p className="flex items-start gap-2 rounded-2xl bg-[color:color-mix(in_srgb,var(--score-mid)_10%,transparent)] px-4 py-3 text-xs text-warn">
+        <IconInfo size={16} className="mt-px shrink-0" /> {t("demo.note")}
+      </p>
 
       {/* ORB + AI XULOSA */}
       <div className="grid gap-5 lg:grid-cols-12">

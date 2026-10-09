@@ -7,7 +7,7 @@ import { levelVar, METRIC_KEYS, scoreLevel } from "@/lib/score";
 import { COMPARE_MAX, useCompare } from "@/lib/store";
 import type { AiAnalysis, Resort } from "@/lib/types";
 import { IconClose, IconCompareResorts, metricIcon } from "@/components/icons";
-import { Scene } from "@/components/signature";
+import { ResortPhoto } from "@/components/signature";
 import { ButtonLink, cn, EmptyState, Glass, ScoreBadge, Select, Skeleton, Stars } from "@/components/ui";
 
 export default function CompareResortsPage() {
@@ -56,7 +56,7 @@ export default function CompareResortsPage() {
                   {rows.map(({ r }) => (
                     <th key={r.id} className="p-4 align-top" style={{ width: `${100 / rows.length}%` }}>
                       <div className="relative overflow-hidden rounded-3xl">
-                        <Scene type={r.cover} seed={r.id} className="h-24 w-full" />
+                        <ResortPhoto r={r} className="h-24 w-full" />
                         <button onClick={() => cmp.toggle(r.id)} aria-label={`${t("vs.remove")}: ${r.name}`}
                           className="absolute right-2 top-2 grid size-9 place-items-center rounded-full bg-black/40 text-white backdrop-blur hover:bg-black/60"><IconClose size={16} /></button>
                       </div>

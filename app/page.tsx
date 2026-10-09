@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion, useScroll, useTransform, useReducedMotion } from "motion/react";
 import { useI18n } from "@/lib/i18n";
-import { getAnalysis, getResortsByIds, popularAreas, regions } from "@/lib/api";
+import { getAnalysis, getResortsByIds, popularAreas, regions, searchResorts } from "@/lib/api";
 import { useRecent } from "@/lib/store";
 import type { AiAnalysis, Resort } from "@/lib/types";
 import { IconArrowRight, IconRecent, IconSearch, IconTrust } from "@/components/icons";
@@ -141,10 +141,12 @@ export default function HomePage() {
 
 function StatsRow() {
   const { t } = useI18n();
+  const [list, setList] = useState<Resort[]>([]);
+  useEffect(() => { searchResorts().then(setList); }, []);
   const items = [
-    { n: "8", l: t("home.stat.resorts") },
-    { n: "228", l: t("home.stat.reviews") },
-    { n: "7", l: t("home.stat.weights") },
+    { n: list.length || "—", l: t("home.stat.resorts") },
+    { n: list.length ? list.reduce((s, r) => s + r.review_count, 0) : "—", l: t("home.stat.reviews") },
+    { n: 7, l: t("home.stat.weights") },
   ];
   return (
     <dl className="mt-10 flex flex-wrap gap-x-10 gap-y-4">

@@ -253,7 +253,7 @@ function ResortForm({ onSave, onCancel }: { onSave: (r: Resort) => void; onCance
       onSubmit={(e) => {
         e.preventDefault();
         if (!f.name.trim()) return;
-        onSave({ id: `new-${Date.now()}`, name: f.name, region: f.region, district: f.district, address: f.address, lat: 0, lng: 0, rating: 0, trust_score: null, review_count: 0, price_from: Number(f.price) || 0, main_problem: null, tags: [], cover: "mountains", locations: [] });
+        onSave({ id: `new-${Date.now()}`, name: f.name, region: f.region, district: f.district, address: f.address, lat: 0, lng: 0, rating: 0, trust_score: null, review_count: 0, price_from: Number(f.price) || 0, main_problem: null, tags: [], cover: "mountains", locations: [], kind: "resort" });
       }}>
       <input required placeholder={t("admin.name")} aria-label={t("admin.name")} value={f.name} onChange={set("name")} className={fieldCls} />
       <Select value={f.region} onChange={set("region")} aria-label={t("admin.region")}>{regions().map((r) => <option key={r}>{r}</option>)}</Select>

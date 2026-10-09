@@ -28,6 +28,7 @@ npm run dev      # http://localhost:3000
 | `/profile` | Kirish / ro‘yxatdan o‘tish (maket), saqlanganlar, sozlamalar |
 | `/admin` | Admin: dashboard, maskanlar, moderatsiya, rasmlar, AI jobs, foydalanuvchilar |
 | `/icons` | Ikonkalar tizimi (barcha o‘lcham va holatlar) |
+| `/credits` | Barcha rasmlar mualliflari va litsenziyalari |
 
 Til: o‘zbekcha / ruscha / inglizcha. Mavzu: qorong‘i (asosiy) / yorug‘. Tarjimalar — `lib/i18n.tsx` (uz, ru) va `lib/i18n-en.ts` (en).
 
@@ -53,7 +54,8 @@ Lokatsiya turi (`locations` maydoni: `mountain | snow | green | water`) — `lib
 - Admin bo'limidagi `adminStats/adminJobs/adminUsers/adminReviews` hozircha faqat mock — admin endpointlari qo'shilganda shu funksiyalarni almashtiring.
 - Kirish (JWT) hozircha faqat dizayn: `app/profile/page.tsx`.
 - Sharh qoldirish: `addReview()` yaratilgan sharhni qaytarishi kerak (`Review`, `status: "pending"`). Demo rejimida sharhlar brauzerda (`localStorage`) saqlanadi.
-- Demo ma'lumotlar — [`lib/mock-data.ts`](lib/mock-data.ts). Maskan nomlari o'ylab topilgan.
+- Demo ma’lumotlar — [`lib/mock-data.ts`](lib/mock-data.ts): 8 ta o‘ylab topilgan maskan (`kind: "resort"`) va O‘zbekistondagi 25 ta haqiqiy tabiiy dam olish zonasi (`kind: "zone"`). Zonalar haqiqiy, lekin ularning baholari, narxlari va sharhlari **namunaviy** — saytda buni bildiruvchi belgi bor.
+- Kartochka rasmlari — `public/photos/{id}.webp`, mualliflar — [`lib/photos.ts`](lib/photos.ts), ro‘yxat sahifasi — `/credits`.
 
 ## Texnologiyalar
 

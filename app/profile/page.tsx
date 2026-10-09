@@ -3,10 +3,9 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useI18n } from "@/lib/i18n";
 import { useTheme } from "@/lib/theme";
-import { getResortsByIds } from "@/lib/api";
-import { reviews } from "@/lib/mock-data";
+import { getMyReviews, getResortsByIds } from "@/lib/api";
 import { useSaved } from "@/lib/store";
-import type { Resort } from "@/lib/types";
+import type { Resort, Review } from "@/lib/types";
 import { IconInfo, IconLogout, IconSaved } from "@/components/icons";
 import { Button, Field, fieldCls, Glass, ScoreBadge, Segmented, SectionTitle, Stars } from "@/components/ui";
 
@@ -20,7 +19,17 @@ export default function ProfilePage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [savedList, setSavedList] = useState<Resort[]>([]);
+  const [mine, setMine] = useState<Review[]>([]);
   useEffect(() => { getResortsByIds(saved.ids).then(setSavedList); }, [saved.ids]);
+  const [names, setNames] = useState<Record<string, string>>({});
+  useEffect(() => {
+    if (!user) return;
+    getMyReviews().then(async (list) => {
+      setMine(list);
+      const rs = await getResortsByIds([...new Set(list.map((r) => r.resort_id))]);
+      setNames(Object.fromEntries(rs.map((r) => [r.id, r.name])));
+    });
+  }, [user]);
 
   const settings = (
     <Glass className="p-6">
@@ -39,6 +48,7 @@ export default function ProfilePage() {
   if (user) {
     return (
       <div className="mx-auto max-w-3xl space-y-5">
+        <h1 className="sr-only">{t("profile.title")}</h1>
         <Glass level={3} className="flex flex-wrap items-center gap-4 p-6">
           <span className="grid size-16 place-items-center rounded-full bg-gradient-to-br from-[color:var(--jade-400)] to-[color:var(--jade)] font-display text-2xl font-extrabold text-on-jade">{user[0]?.toUpperCase()}</span>
           <div className="flex-1">
@@ -61,14 +71,21 @@ export default function ProfilePage() {
         </Glass>
         <Glass solid className="p-6">
           <SectionTitle>{t("profile.myReviews")}</SectionTitle>
-          <ul className="divide-y divide-[color:var(--line)]">
-            {reviews.slice(0, 3).map((r) => (
-              <li key={r.id} className="py-4">
-                <div className="flex items-center gap-3"><Stars value={r.rating} /><span className="text-xs text-low">{fmtDate(r.date)}</span></div>
-                <p className="mt-2 leading-relaxed">{r.text}</p>
-              </li>
-            ))}
-          </ul>
+          {mine.length === 0 ? <p className="text-sm text-low">{t("profile.myReviewsEmpty")}</p> : (
+            <ul className="divide-y divide-[color:var(--line)]">
+              {mine.map((r) => (
+                <li key={r.id} className="py-4">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <Stars value={r.rating} />
+                    <span className="text-xs text-low">{fmtDate(r.date)}</span>
+                    <Link href={`/resort/${r.resort_id}`} className="text-xs font-semibold text-mint hover:underline">{names[r.resort_id] ?? r.resort_id}</Link>
+                    {r.status === "pending" && <span className="ml-auto text-xs font-semibold text-warn">{t("review.pending")}</span>}
+                  </div>
+                  <p className="mt-2 leading-relaxed">{r.text}</p>
+                </li>
+              ))}
+            </ul>
+          )}
         </Glass>
         {settings}
       </div>
@@ -77,6 +94,7 @@ export default function ProfilePage() {
 
   return (
     <div className="mx-auto max-w-md space-y-5">
+      <h1 className="font-display text-[30px] font-extrabold leading-tight">{t("profile.title")}</h1>
       <Glass level={3} className="p-6 md:p-8">
         <Segmented className="mb-7 w-full [&>button]:flex-1" label={t("profile.title")} value={tab} onChange={setTab}
           options={[{ value: "login", label: t("profile.login") }, { value: "register", label: t("profile.register") }]} />

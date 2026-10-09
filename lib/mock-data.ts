@@ -1,8 +1,9 @@
 // DEMO ma’lumotlar. Maskan nomlari o‘ylab topilgan.
 // Backend ulanganda bu fayl o‘rniga lib/api.ts dagi so‘rovlar ishlaydi.
-import type { AiAnalysis, AnalysisJob, Resort, Review, User } from "./types";
+import type { AiAnalysis, AnalysisJob, Lang, LocationType, MetricName, Resort, Review, Scene, Topic, User } from "./types";
+import { computeTrustScore } from "./score";
 
-export const resorts: Resort[] = [
+const demoResorts: Omit<Resort, "kind">[] = [
   { id: "yashil-vodiy", name: "Yashil Vodiy Resort", region: "Toshkent viloyati", district: "Bo‘stonliq", address: "Chimyon yo‘li, 12", lat: 41.55, lng: 70.02, rating: 4.6, trust_score: 72, review_count: 24, price_from: 850000, main_problem: "price", tags: ["pool", "food"], cover: "forest", locations: ["green", "mountain"] },
   { id: "chorvoq-boyi", name: "Chorvoq Bo‘yi", region: "Toshkent viloyati", district: "Bo‘stonliq", address: "Suv ombori sohili", lat: 41.62, lng: 70.03, rating: 4.8, trust_score: 54, review_count: 41, price_from: 1200000, main_problem: "cleanliness", tags: ["location", "pool"], cover: "lake", locations: ["water", "mountain"] },
   { id: "zomin-archazor", name: "Zomin Archazor", region: "Jizzax viloyati", district: "Zomin", address: "Milliy bog‘ hududi", lat: 39.7, lng: 68.4, rating: 4.4, trust_score: 86, review_count: 33, price_from: 600000, main_problem: "room", tags: ["location", "staff"], cover: "mountains", locations: ["green", "mountain", "snow"] },
@@ -18,7 +19,7 @@ const R = (
   sentiment: Review["sentiment"], sentiment_score: number, fake_probability: number, topics: Review["topics"], language: Review["language"] = "uz", flags: Review["flags"] = [],
 ): Review => ({ id: `r${id}`, resort_id, author, rating, text, source: "site", date, language, sentiment, sentiment_score, fake_probability, topics, flags });
 
-export const reviews: Review[] = [
+const handReviews: Review[] = [
   R(1, "yashil-vodiy", "Dilnoza K.", 5, "Basseyn juda toza, ovqat mazali. Bolalar uchun maydoncha bor, oilamiz bilan juda yoqdi.", "2026-09-28", "positive", 0.94, 8, ["pool", "food", "cleanliness"]),
   R(2, "yashil-vodiy", "Jasur T.", 3, "Joy chiroyli, lekin narxlar reklamadagidan ancha qimmat chiqdi. Nonushta narxga kirmagan.", "2026-09-25", "neutral", 0.55, 12, ["price"]),
   R(3, "yashil-vodiy", "Ольга М.", 4, "Хороший персонал, быстро заселили. Номер меньше, чем на фото, но чистый.", "2026-09-22", "positive", 0.71, 10, ["staff", "room", "cleanliness"], "ru"),
@@ -137,7 +138,7 @@ const analysisBase: Record<string, A> = {
   },
 };
 
-export const analyses: AiAnalysis[] = Object.entries(analysisBase).map(([resort_id, a]) => ({
+const demoAnalyses: AiAnalysis[] = Object.entries(analysisBase).map(([resort_id, a]) => ({
   resort_id,
   updated_at: "2026-10-08T10:30:00Z",
   ...a,
@@ -157,4 +158,205 @@ export const users: User[] = [
   { id: "u3", name: "Jasur T.", email: "jasur@example.com", role: "user", created_at: "2026-09-04", blocked: false, review_count: 1 },
   { id: "u4", name: "Mehmon", email: "spam123@example.com", role: "user", created_at: "2026-09-19", blocked: true, review_count: 5 },
   { id: "u5", name: "Ольга М.", email: "olga@example.com", role: "user", created_at: "2026-09-21", blocked: false, review_count: 2 },
+];
+
+/* ============================================================
+   Tabiiy dam olish zonalari — HAQIQIY joylar, lekin baholar va sharhlar DEMO (namunaviy).
+   Backend ulanganda bu bo‘lim o‘rniga real ma’lumotlar keladi.
+   ============================================================ */
+type Z = [id: string, name: string, region: string, district: string, address: string, lat: number, lng: number, locations: LocationType[], price: number, rating: number];
+
+const ZONES: Z[] = [
+  ["chimyon", "Chimyon tog‘lari", "Toshkent viloyati", "Bo‘stonliq", "Katta Chimyon etagi", 41.535, 70.015, ["mountain", "snow", "green"], 600000, 4.6],
+  ["beldersoy", "Beldersoy", "Toshkent viloyati", "Bo‘stonliq", "Beldersoy vodiysi", 41.497, 70.058, ["mountain", "snow"], 700000, 4.5],
+  ["chorvoq", "Chorvoq suv ombori", "Toshkent viloyati", "Bo‘stonliq", "Chorvoq qirg‘oqlari", 41.63, 70.05, ["water", "mountain"], 900000, 4.7],
+  ["xumson", "Xumson", "Toshkent viloyati", "Bo‘stonliq", "Xumson shaharchasi", 41.71, 70.03, ["mountain", "green"], 500000, 4.3],
+  ["sijjak", "Sijjak", "Toshkent viloyati", "Bo‘stonliq", "Sijjak qishlog‘i", 41.68, 70.14, ["water", "green"], 650000, 4.4],
+  ["nanay", "Pskem vodiysi (Nanay)", "Toshkent viloyati", "Bo‘stonliq", "Nanay qishlog‘i", 41.89, 70.36, ["mountain", "water"], 450000, 4.6],
+  ["urungach", "Urungach ko‘llari", "Toshkent viloyati", "Bo‘stonliq", "Ugom-Chotqol, Pskem tizmasi", 41.62, 70.34, ["water", "mountain"], 300000, 4.8],
+  ["ugam", "Ugom-Chotqol milliy bog‘i", "Toshkent viloyati", "Bo‘stonliq", "Xo‘jakent – Burchmulla", 41.63, 70.18, ["mountain", "green"], 550000, 4.5],
+  ["gulkam", "Gulkam darasi", "Toshkent viloyati", "Bo‘stonliq", "Chimyon yaqinida", 41.565, 70.065, ["water", "mountain", "snow"], 400000, 4.4],
+  ["paltau", "Paltau sharsharasi", "Toshkent viloyati", "Bo‘stonliq", "Paltau soyi", 41.62, 70.02, ["water"], 400000, 4.2],
+  ["tuyabogiz", "Tuyabo‘g‘iz (Toshkent dengizi)", "Toshkent viloyati", "Ohangaron", "Tuyabo‘g‘iz suv ombori", 41.04, 69.33, ["water"], 350000, 4.0],
+  ["zomin", "Zomin milliy bog‘i", "Jizzax viloyati", "Zomin", "Zomin tog‘ yonbag‘ri", 39.62, 68.42, ["green", "mountain", "snow"], 550000, 4.6],
+  ["baxmal", "Baxmal tog‘lari", "Jizzax viloyati", "Baxmal", "O‘smat qishlog‘i", 39.7, 67.99, ["green", "mountain"], 400000, 4.4],
+  ["aydarkul", "Aydarko‘l", "Navoiy viloyati", "Nurota", "Aydarko‘l qirg‘og‘i, o‘tovlar oromgohi", 40.85, 66.8, ["water"], 600000, 4.5],
+  ["nurota", "Nurota tog‘lari (Sentob)", "Navoiy viloyati", "Nurota", "Sentob qishlog‘i", 40.62, 66.7, ["mountain", "green"], 450000, 4.6],
+  ["sarmishsoy", "Sarmishsoy darasi", "Navoiy viloyati", "Navbahor", "Qoratog‘ etagi", 40.27, 65.54, ["mountain"], 300000, 4.3],
+  ["omonqoton", "Omonqo‘ton", "Samarqand viloyati", "Urgut", "Omonqo‘ton darasi", 39.28, 66.93, ["green", "mountain"], 450000, 4.3],
+  ["zarafshon", "Zarafshon milliy bog‘i", "Samarqand viloyati", "Jomboy", "Zarafshon daryosi bo‘yi", 39.73, 66.86, ["water", "green"], 400000, 4.1],
+  ["hisor", "Hisor qo‘riqxonasi", "Qashqadaryo viloyati", "Shahrisabz", "Kitob – Shahrisabz tog‘lari", 38.95, 67.37, ["mountain", "green", "snow"], 450000, 4.5],
+  ["boysun", "Boysun tog‘lari (Xo‘ja Gur-Gur ota)", "Surxondaryo viloyati", "Boysun", "Xo‘ja Gur-Gur ota darasi", 38.3, 67.15, ["mountain"], 350000, 4.4],
+  ["sangardak", "Sangardak sharsharasi", "Surxondaryo viloyati", "Sariosiyo", "Sangardak qishlog‘i", 38.6, 67.6, ["water", "mountain", "green"], 350000, 4.6],
+  ["shohimardon", "Shohimardon", "Farg‘ona viloyati", "Farg‘ona (eksklav)", "Ko‘lko‘l yo‘li", 39.98, 71.8, ["water", "mountain", "green"], 500000, 4.5],
+  ["chodak", "Chodak soyi", "Namangan viloyati", "Pop", "Chodak qishlog‘i", 41.13, 70.87, ["water", "green"], 350000, 4.2],
+  ["chortoq", "Chortoq (Baliqliko‘l)", "Namangan viloyati", "Chortoq", "Baliqliko‘l ziyoratgohi", 41.07, 71.82, ["water", "green"], 450000, 4.1],
+  ["andijon", "Andijon suv ombori", "Andijon viloyati", "Xonobod", "Kampirravot suv ombori", 40.77, 72.98, ["water"], 400000, 4.0],
+];
+
+function seeded(seed: string) {
+  let h = 2166136261;
+  for (const c of seed) h = Math.imul(h ^ c.charCodeAt(0), 16777619);
+  return () => {
+    h = Math.imul(h ^ (h >>> 15), 2246822507);
+    h = Math.imul(h ^ (h >>> 13), 3266489909);
+    return ((h ^= h >>> 16) >>> 0) / 4294967296;
+  };
+}
+const clamp = (v: number) => Math.max(8, Math.min(98, Math.round(v)));
+
+const TOPIC_WORD: Record<Lang, Record<Topic, string>> = {
+  uz: { cleanliness: "tozalik", food: "ovqat", service: "xizmat", staff: "mezbonlar", price: "narx/sifat", location: "manzara", room: "turar joy", pool: "basseyn", safety: "xavfsizlik", other: "boshqa" },
+  ru: { cleanliness: "чистота", food: "еда", service: "сервис", staff: "хозяева", price: "цена/качество", location: "виды", room: "жильё", pool: "бассейн", safety: "безопасность", other: "другое" },
+  en: { cleanliness: "cleanliness", food: "food", service: "service", staff: "hosts", price: "value for money", location: "scenery", room: "accommodation", pool: "pool", safety: "safety", other: "other" },
+};
+
+const PHRASES: Partial<Record<Topic, { pos: [string, string]; neg: [string, string] }>> = {
+  cleanliness: { pos: ["Hudud toza, chiqindi deyarli yo‘q.", "Территория чистая, мусора почти нет."], neg: ["Ba’zi joylarda chiqindi ko‘p, tozalash kam.", "Местами много мусора, убирают редко."] },
+  food: { pos: ["Mahalliy taomlar mazali, osh alohida yoqdi.", "Местная еда вкусная, особенно плов."], neg: ["Ovqat tanlovi kam, narxi esa baland.", "Выбор еды скромный, а цены высокие."] },
+  service: { pos: ["Xizmat tez, hamma narsa vaqtida.", "Обслуживание быстрое, всё вовремя."], neg: ["Xizmat sekin, uzoq kutishga to‘g‘ri keldi.", "Обслуживание медленное, пришлось долго ждать."] },
+  staff: { pos: ["Mezbonlar samimiy va yordamga tayyor.", "Хозяева приветливые и всегда помогут."], neg: ["Ba’zi xodimlar qo‘pol muomala qildi.", "Некоторые сотрудники были грубоваты."] },
+  price: { pos: ["Narx/sifat nisbati yaxshi.", "Хорошее соотношение цены и качества."], neg: ["Dam olish kunlari narxlar ancha qimmat.", "В выходные цены заметно выше."] },
+  location: { pos: ["Manzara ajoyib, havo toza.", "Потрясающие виды и чистый воздух."], neg: ["Yo‘l yomon, borish ancha qiyin.", "Дорога плохая, добираться сложно."] },
+  room: { pos: ["Mehmon uyi shinam va toza.", "Гостевой дом уютный и чистый."], neg: ["Xona kichik, jihozlar eskirgan.", "Комната маленькая, мебель старая."] },
+  safety: { pos: ["Bolalar bilan ham xavfsiz.", "Безопасно даже с детьми."], neg: ["Suv bo‘yida qutqaruvchi yo‘q, ehtiyot bo‘ling.", "У воды нет спасателей, будьте осторожны."] },
+};
+const OPENERS: Record<LocationType, [string, string]> = {
+  mountain: ["Tog‘ havosi zo‘r, piyoda yurish uchun ideal.", "Горный воздух отличный, идеально для походов."],
+  snow: ["Qishda qor ko‘p, chang‘i uchun qulay.", "Зимой много снега, удобно для лыж."],
+  green: ["Atrof yam-yashil, oila bilan dam olishga mos.", "Вокруг всё зелёное, подходит для семейного отдыха."],
+  water: ["Suv toza va salqin, yozda zo‘r.", "Вода чистая и прохладная, летом отлично."],
+};
+const AUTHORS = ["Dilshod", "Nilufar", "Sherzod", "Madina", "Bobur", "Shahnoza", "Jamshid", "Zarina", "Aziz", "Feruza", "Otabek", "Kamola", "Анна", "Тимур", "Елена", "Рустам", "Gulnoza", "Sanjar", "Мария", "Ulug‘bek"];
+const METRIC_TOPIC: [MetricName, Topic][] = [["service", "service"], ["cleanliness", "cleanliness"], ["food", "food"], ["staff", "staff"], ["price", "price"]];
+const EXTRA_TOPICS: Topic[] = ["location", "room", "safety"];
+
+type Metrics = Pick<AiAnalysis, MetricName>;
+
+/** Ko‘rsatkichlarga mos sharhlar: mavzu bo‘yicha salbiy ehtimol = (100 − ko‘rsatkich) / 100 */
+function genReviews(id: string, n: number, m: Metrics, locs: LocationType[], startIdx = 0): Review[] {
+  const r = seeded(`${id}-reviews-${startIdx}`);
+  const out: Review[] = [];
+  for (let i = 0; i < n; i++) {
+    const ru = r() < 0.3;
+    const L = ru ? 1 : 0;
+    const pool: [Topic, number][] = [...METRIC_TOPIC.map(([k, t]) => [t, m[k] ?? 70] as [Topic, number]), ...EXTRA_TOPICS.map((t) => [t, 72] as [Topic, number])];
+    const pick = pool.sort(() => r() - 0.5).slice(0, 1 + Math.floor(r() * 2));
+    let neg = 0;
+    const parts = [OPENERS[locs[i % locs.length]][L]];
+    const topics: Topic[] = [];
+    for (const [t, v] of pick) {
+      const ph = PHRASES[t];
+      if (!ph) continue;
+      const bad = r() * 100 > v;
+      if (bad) neg++;
+      parts.push((bad ? ph.neg : ph.pos)[L]);
+      topics.push(t);
+    }
+    const sentiment: Review["sentiment"] = neg === 0 ? "positive" : neg >= topics.length ? "negative" : "neutral";
+    const rating = sentiment === "positive" ? (r() < 0.6 ? 5 : 4) : sentiment === "neutral" ? 3 : r() < 0.5 ? 2 : 1;
+    const suspicious = i === 2 && r() < 0.5;
+    const day = 1 + Math.floor(r() * 27);
+    const month = 6 + Math.floor(r() * 4);
+    out.push({
+      id: `${id}-g${startIdx + i}`,
+      resort_id: id,
+      author: suspicious ? "Mehmon" : AUTHORS[Math.floor(r() * AUTHORS.length)],
+      rating: suspicious ? 5 : rating,
+      text: suspicious ? (ru ? "Лучшее место! Всем советую!!!" : "Eng zo‘r joy! Hammaga tavsiya qilaman!!!") : parts.join(" "),
+      source: "site",
+      date: `2026-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`,
+      language: ru ? "ru" : "uz",
+      sentiment: suspicious ? "positive" : sentiment,
+      sentiment_score: Math.round((0.55 + r() * 0.4) * 100) / 100,
+      fake_probability: suspicious ? 70 + Math.floor(r() * 20) : 3 + Math.floor(r() * 18),
+      topics: suspicious ? ["other"] : topics.length ? topics : ["location"],
+      flags: suspicious ? ["no_details", "extreme"] : [],
+    });
+  }
+  return out.sort((a, b) => b.date.localeCompare(a.date));
+}
+
+function countTopics(list: Review[], want: "pos" | "neg") {
+  const c = new Map<Topic, number>();
+  for (const rv of list) {
+    if (rv.fake_probability >= 60) continue;
+    const hit = want === "neg" ? rv.sentiment !== "positive" : rv.sentiment !== "negative";
+    if (!hit) continue;
+    for (const t of rv.topics) if (t !== "other") c.set(t, (c.get(t) ?? 0) + 1);
+  }
+  return [...c.entries()].sort((a, b) => b[1] - a[1]);
+}
+
+const EXTRA: Record<LocationType, Record<Lang, string>> = {
+  water: { uz: "Suv bo‘yida dam olish uchun eng qulay vaqt — yoz oylari.", ru: "Лучшее время для отдыха у воды — летние месяцы.", en: "Summer is the best time for a rest by the water." },
+  mountain: { uz: "Tog‘ yo‘llari sababli sayohatni oldindan rejalashtirish tavsiya etiladi.", ru: "Из-за горных дорог поездку лучше спланировать заранее.", en: "Because of mountain roads, plan the trip in advance." },
+  snow: { uz: "Qishda chang‘i va qorli sayr uchun mashhur.", ru: "Зимой популярно у лыжников и любителей снега.", en: "In winter it is popular for skiing and snow walks." },
+  green: { uz: "Oilaviy dam olish va piknik uchun qulay.", ru: "Удобно для семейного отдыха и пикников.", en: "Good for family holidays and picnics." },
+};
+
+function summaryFor(strengths: Topic[], problems: Topic[], loc: LocationType): AiAnalysis["summary"] {
+  const make = (lang: Lang) => {
+    const w = TOPIC_WORD[lang];
+    const s = strengths.slice(0, 2).map((t) => w[t]);
+    const p = problems[0] ? w[problems[0]] : null;
+    const pos = { uz: `Mehmonlar ${s.join(" va ")}ni yuqori baholaydi.`, ru: `Гости высоко оценивают: ${s.join(" и ")}.`, en: `Guests rate the ${s.join(" and ")} highly.` }[lang];
+    const neg = p ? { uz: `Eng ko‘p tilga olingan muammo — ${p}.`, ru: `Чаще всего жалуются на: ${p}.`, en: `The most common complaint concerns ${p}.` }[lang] : "";
+    const note = { uz: "Tabiiy zona: narx va xizmatlar atrofdagi mehmon uylari bo‘yicha.", ru: "Природная зона: цены и сервис — по гостевым домам поблизости.", en: "Natural area: prices and services refer to nearby guest houses." }[lang];
+    return [pos, neg, EXTRA[loc][lang], note].filter(Boolean).join(" ");
+  };
+  return { uz: make("uz"), ru: make("ru"), en: make("en") };
+}
+
+const zoneData = ZONES.map(([id, name, region, district, address, lat, lng, locations, price, rating]) => {
+  const r = seeded(id);
+  const base = (rating - 3.6) * 24 + 56;
+  const m: Metrics = {
+    reliability: clamp(62 + r() * 26),
+    service: clamp(base + (r() - 0.6) * 30),
+    cleanliness: clamp(base + (r() - 0.5) * 30),
+    food: clamp(base + (r() - 0.55) * 30),
+    staff: clamp(base + (r() - 0.45) * 26),
+    price: clamp(base + (r() - 0.7) * 30),
+    ad_match: r() < 0.4 ? null : clamp(base + (r() - 0.5) * 20),
+  };
+  const n = 9 + Math.floor(r() * 6);
+  const list = genReviews(id, n, m, locations);
+  const problems = countTopics(list, "neg").slice(0, 4).map(([topic, mentions]) => ({ topic, mentions }));
+  const strengths = countTopics(list, "pos").map(([t]) => t).filter((t) => !problems.slice(0, 1).some((p) => p.topic === t)).slice(0, 3);
+  const cover: Scene = locations[0] === "water" ? "lake" : locations[0] === "green" ? "forest" : "mountains";
+  const resort: Resort = {
+    id, name, region, district, address, lat, lng, rating, trust_score: null, review_count: list.length, price_from: price,
+    main_problem: problems[0]?.topic ?? null, tags: strengths, cover, locations, kind: "zone",
+  };
+  const analysis: AiAnalysis = {
+    resort_id: id, ...m, overall: computeTrustScore(m), confidence: list.length >= 12 ? "high" : "medium",
+    summary: summaryFor(strengths.length ? strengths : ["location"], problems.map((p) => p.topic), locations[0]),
+    strengths, problems, analyzed_reviews: list.length, updated_at: "2026-10-07T12:00:00Z",
+  };
+  return { resort, analysis, list };
+});
+
+// Demo maskanlar uchun sharhlar sonini kartochkadagi raqamga moslash
+const DEMO_TARGET: Record<string, number> = { "chorvoq-boyi": 14, "zomin-archazor": 12, "tog-nafasi": 11, "oqtosh-bulogi": 12, "samarqand-bogi": 14, "zarafshon-sohil": 4, "fargona-gullari": 12 };
+const demoExtra = demoAnalyses.flatMap((a) => {
+  const target = DEMO_TARGET[a.resort_id];
+  if (!target) return [];
+  const have = handReviews.filter((r) => r.resort_id === a.resort_id).length;
+  const res = demoResorts.find((x) => x.id === a.resort_id)!;
+  return genReviews(a.resort_id, Math.max(0, target - have), a, res.locations, 100);
+});
+
+export const reviews: Review[] = [...handReviews, ...demoExtra, ...zoneData.flatMap((z) => z.list)];
+
+const countOf = (id: string) => reviews.filter((r) => r.resort_id === id).length;
+
+export const resorts: Resort[] = [
+  ...demoResorts.map((r) => ({ ...r, kind: "resort" as const, review_count: countOf(r.id) })),
+  ...zoneData.map((z) => z.resort),
+];
+
+export const analyses: AiAnalysis[] = [
+  ...demoAnalyses.map((a) => ({ ...a, analyzed_reviews: countOf(a.resort_id) })),
+  ...zoneData.map((z) => z.analysis),
 ];

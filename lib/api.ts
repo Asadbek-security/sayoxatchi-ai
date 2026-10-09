@@ -29,6 +29,7 @@ export interface SearchParams {
   minScore?: number;
   minRating?: number;
   location?: LocationType | "";
+  kind?: Resort["kind"] | "";
   sort?: "score" | "rating" | "price";
 }
 
@@ -45,6 +46,7 @@ export async function searchResorts(p: SearchParams = {}): Promise<Resort[]> {
   if (p.minScore) list = list.filter((r) => (r.trust_score ?? 0) >= p.minScore!);
   if (p.minRating) list = list.filter((r) => r.rating >= p.minRating!);
   if (p.location) list = list.filter((r) => r.locations.includes(p.location as LocationType));
+  if (p.kind) list = list.filter((r) => r.kind === p.kind);
   const sorters = {
     score: (a: Resort, b: Resort) => (b.trust_score ?? -1) - (a.trust_score ?? -1),
     rating: (a: Resort, b: Resort) => b.rating - a.rating,
@@ -60,7 +62,7 @@ export const districts = (region?: string) =>
 export const LOCATION_TYPES: LocationType[] = ["mountain", "snow", "green", "water"];
 
 /** Mashhur hududlar (bosh sahifadagi chiplar) */
-export const popularAreas = ["Chorvoq", "Chimyon", "Zomin", "Bo‘stonliq", "Samarqand", "Farg‘ona"];
+export const popularAreas = ["Chimyon", "Chorvoq", "Zomin", "Beldersoy", "Aydarko‘l", "Shohimardon", "Urungach", "Sangardak"];
 
 // GET /api/v1/resorts/{id}
 export async function getResort(id: string): Promise<Resort | null> {
@@ -224,6 +226,12 @@ export async function compareImages(ad: File, real: File): Promise<ImageCompareR
       en: "Only visible differences are noted. This is an AI indicator, not an expert conclusion.",
     },
   };
+}
+
+/** Demo foydalanuvchi o‘zi yozgan sharhlar (profil sahifasi) */
+export async function getMyReviews(): Promise<Review[]> {
+  await delay(100);
+  return readMyReviews();
 }
 
 // --- Admin ---

@@ -35,6 +35,8 @@ export interface Resort {
   cover: Scene; // rasm o‘rniga chizilgan manzara
   /** Lokatsiya turi (bosh sahifadagi kategoriyalar, qidiruv filtri) */
   locations: LocationType[];
+  /** "resort" — dam olish maskani (biznes), "zone" — tabiiy dam olish zonasi */
+  kind: "resort" | "zone";
 }
 
 export type LocationType = "mountain" | "snow" | "green" | "water";

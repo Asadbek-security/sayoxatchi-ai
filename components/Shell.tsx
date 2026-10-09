@@ -10,8 +10,6 @@ import {
   IconClose, IconCompareResorts, IconDashboard, IconHome, IconImage, IconMoon, IconProfile, IconSaved, IconSearch, IconSun, IconTrust,
   type IconProps,
 } from "./icons";
-import { PHOTO_CREDITS } from "./CityBackdrop";
-import { LOCATION_PHOTOS } from "@/lib/scene";
 import { cn, Disclaimer, Logo } from "./ui";
 
 type NavItem = { href: string; key: DictKey; icon: (p: IconProps) => React.JSX.Element };
@@ -200,17 +198,11 @@ export function Footer() {
             <Link href="/admin" className="hover:text-hi">{t("nav.admin")}</Link>
           </div>
         </div>
-        <div>
-          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-low">{t("footer.photos")} · Wikimedia Commons</p>
-          <ul className="space-y-1.5 text-xs text-mid">
-            {[...PHOTO_CREDITS, ...Object.values(LOCATION_PHOTOS).map((p) => ({ place: p.place, author: p.credit, license: p.license, url: p.url }))].map((c) => (
-              <li key={c.url}>
-                <a href={c.url} target="_blank" rel="noreferrer" className="hover:text-hi">
-                  {c.place} — {c.author}, <span className="text-low">{c.license}</span>
-                </a>
-              </li>
-            ))}
-          </ul>
+        <div className="space-y-3">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-low">{t("footer.photos")} · Wikimedia Commons</p>
+          <p className="max-w-sm text-xs text-mid">{t("credits.sub")}</p>
+          <Link href="/credits" className="inline-flex h-10 items-center rounded-full bg-[color:var(--glass-top)] px-4 text-sm font-semibold text-hi hover:bg-[color:var(--glass-bottom)]">{t("credits.title")} →</Link>
+          <p className="max-w-sm text-xs text-warn">{t("demo.note")}</p>
         </div>
       </div>
     </footer>

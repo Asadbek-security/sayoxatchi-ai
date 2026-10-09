@@ -6,9 +6,10 @@ import { useI18n, type DictKey } from "@/lib/i18n";
 import { levelVar, scoreLevel, WEIGHTS, type MetricKey } from "@/lib/score";
 import { useCompare } from "@/lib/store";
 import type { AnalysisStep } from "@/lib/api";
+import { photoSrc } from "@/lib/photos";
 import type { AiAnalysis, Resort, Review, Scene as SceneT, TopicBalance } from "@/lib/types";
 import {
-  IconAlert, IconArrowRight, IconCheck, IconCompareResorts, IconLocation, IconSuspicious, metricIcon, topicIcon,
+  IconAlert, IconArrowRight, IconCheck, IconCompareResorts, IconHome, IconLocation, IconSuspicious, IconTree, metricIcon, topicIcon,
 } from "./icons";
 import { cn, EASE, Glass, ScoreBadge, Stars, TopicChip, Tooltip } from "./ui";
 
@@ -232,6 +233,14 @@ export function Scene({ type, seed, className }: { type: SceneT; seed: string; c
   );
 }
 
+/** Haqiqiy foto (Wikimedia Commons) yoki, yo‘q bo‘lsa, chizilgan manzara */
+export function ResortPhoto({ r, className, eager }: { r: Pick<Resort, "id" | "cover" | "name">; className?: string; eager?: boolean }) {
+  const src = photoSrc(r.id);
+  if (!src) return <Scene type={r.cover} seed={r.id} className={className} />;
+  // eslint-disable-next-line @next/next/no-img-element
+  return <img src={src} alt={r.name} loading={eager ? "eager" : "lazy"} decoding="async" className={cn("object-cover", className)} />;
+}
+
 /* ============================================================
    Maskan kartochkasi
    ============================================================ */
@@ -256,23 +265,27 @@ export function ResortCard({ r }: { r: Resort }) {
       className="glass g2 glass-hover group flex flex-col overflow-hidden"
     >
       <div className="relative h-44 overflow-hidden rounded-t-[24px]">
-        <Scene type={r.cover} seed={r.id} className="absolute inset-0 size-full transition-transform duration-700 group-hover:scale-[1.04]" />
-        <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-[color:var(--bg-1)]/80 to-transparent" />
+        <ResortPhoto r={r} className="absolute inset-0 size-full transition-transform duration-700 group-hover:scale-[1.04]" />
+        <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/55 to-transparent" />
         <button
           type="button"
           onClick={() => cmp.toggle(r.id)}
           disabled={!inCmp && cmp.full}
           aria-pressed={inCmp}
-          title={!inCmp && cmp.full ? t("vs.max") : undefined}
+          aria-label={inCmp ? t("card.compareIn") : t("card.compareAdd")}
+          title={!inCmp && cmp.full ? t("vs.max") : t("card.compareAdd")}
           className={cn(
             "absolute left-3 top-3 z-10 inline-flex h-9 items-center gap-1.5 rounded-full px-3 text-xs font-semibold backdrop-blur-md transition",
-            inCmp ? "bg-[color:var(--jade)] text-on-jade" : "bg-black/35 text-white hover:bg-black/50 disabled:opacity-50",
+            inCmp ? "bg-[color:var(--jade)] text-on-jade" : "bg-black/40 text-white hover:bg-black/55 disabled:opacity-50",
           )}
         >
           {inCmp ? <IconCheck size={16} /> : <IconCompareResorts size={16} />}
-          {inCmp ? t("card.compareIn") : t("card.compareAdd")}
+          {inCmp ? t("card.compareIn") : t("nav.versus")}
         </button>
         <div className="absolute right-3 top-3"><ScoreBadge score={r.trust_score} /></div>
+        <span className="absolute bottom-3 left-3 inline-flex h-7 items-center gap-1 rounded-full bg-black/40 px-2.5 text-[11px] font-semibold text-white backdrop-blur-md">
+          {r.kind === "zone" ? <IconTree size={16} /> : <IconHome size={16} />} {t(r.kind === "zone" ? "kind.zone" : "kind.resort")}
+        </span>
       </div>
       <Link href={`/resort/${r.id}`} className="flex flex-1 flex-col gap-2.5 p-5 pt-4 focus-visible:rounded-b-[24px]">
         <h3 className="font-display text-lg font-bold leading-snug text-hi">{r.name}</h3>

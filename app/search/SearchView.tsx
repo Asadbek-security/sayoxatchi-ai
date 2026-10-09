@@ -9,6 +9,7 @@ import { ResortCard } from "@/components/signature";
 import { BottomSheet, Button, Chip, Condense, EmptyState, Field, Glass, Segmented, Select, Skeleton, fieldCls } from "@/components/ui";
 
 type Sort = NonNullable<SearchParams["sort"]>;
+type Kind = Resort["kind"] | "";
 
 export default function SearchView() {
   const { t } = useI18n();
@@ -16,8 +17,18 @@ export default function SearchView() {
   const [q, setQ] = useState(params.get("q") ?? "");
   const [region, setRegion] = useState(params.get("region") ?? "");
   const [district, setDistrict] = useState("");
-  const initLoc = params.get("loc");
-  const [loc, setLoc] = useState<LocationType | "">(LOCATION_TYPES.includes(initLoc as LocationType) ? (initLoc as LocationType) : "");
+  const parseLoc = (v: string | null): LocationType | "" => (LOCATION_TYPES.includes(v as LocationType) ? (v as LocationType) : "");
+  const parseKind = (v: string | null): Kind => (v === "resort" || v === "zone" ? v : "");
+  const [loc, setLoc] = useState<LocationType | "">(parseLoc(params.get("loc")));
+  const [kind, setKind] = useState<Kind>(parseKind(params.get("kind")));
+
+  // URL o‘zgarsa (masalan, kategoriya plitkasidan) — filtrlarni yangilash
+  useEffect(() => {
+    setQ(params.get("q") ?? "");
+    setRegion(params.get("region") ?? "");
+    setLoc(parseLoc(params.get("loc")));
+    setKind(parseKind(params.get("kind")));
+  }, [params]); // eslint-disable-line react-hooks/exhaustive-deps
   const [minScore, setMinScore] = useState(0);
   const [minRating, setMinRating] = useState(0);
   const [sort, setSort] = useState<Sort>("score");
@@ -26,15 +37,20 @@ export default function SearchView() {
 
   useEffect(() => {
     setList(null);
-    const id = setTimeout(() => searchResorts({ q, region, district, minScore, minRating, location: loc, sort }).then(setList), 200);
+    const id = setTimeout(() => searchResorts({ q, region, district, minScore, minRating, location: loc, kind, sort }).then(setList), 200);
     return () => clearTimeout(id);
-  }, [q, region, district, minScore, minRating, loc, sort]);
+  }, [q, region, district, minScore, minRating, loc, kind, sort]);
 
-  const reset = () => { setQ(""); setLoc(""); setRegion(""); setDistrict(""); setMinScore(0); setMinRating(0); setSort("score"); };
-  const activeFilters = [loc, region, district, minScore, minRating].filter(Boolean).length;
+  const reset = () => { setQ(""); setLoc(""); setKind(""); setRegion(""); setDistrict(""); setMinScore(0); setMinRating(0); setSort("score"); };
+  const activeFilters = [kind, loc, region, district, minScore, minRating].filter(Boolean).length;
 
   const filters = (
     <div className="space-y-6">
+      <div>
+        <span className="mb-3 block text-sm font-semibold text-hi">{t("search.kind")}</span>
+        <Segmented className="w-full [&>button]:flex-1 [&>button]:px-2" label={t("search.kind")} value={kind || "all"} onChange={(v) => setKind(v === "all" ? "" : v)}
+          options={[{ value: "all", label: t("search.allKinds") }, { value: "resort", label: t("search.kindResorts") }, { value: "zone", label: t("search.kindZones") }]} />
+      </div>
       <div>
         <span className="mb-3 block text-sm font-semibold text-hi">{t("search.location")}</span>
         <div className="flex flex-wrap gap-2">
@@ -124,7 +140,10 @@ export default function SearchView() {
             <EmptyState icon={<IconSearch size={32} />} text={t("search.empty")} action={<Button variant="glass" onClick={reset}>{t("search.reset")}</Button>} />
           ) : (
             <>
-              <p className="mb-4 text-sm text-low"><span className="num text-base text-hi">{list.length}</span> {t("search.found")}</p>
+              <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+                <p className="text-sm text-low"><span className="num text-base text-hi">{list.length}</span> {t("search.found")}</p>
+                <p className="text-xs text-warn">{t("demo.note")}</p>
+              </div>
               <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
                 {list.map((r, i) => <Condense key={r.id} i={i}><ResortCard r={r} /></Condense>)}
               </div>
