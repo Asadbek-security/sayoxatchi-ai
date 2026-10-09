@@ -27,7 +27,7 @@ export default function ProfilePage() {
       <SectionTitle>{t("profile.settings")}</SectionTitle>
       <div className="flex flex-wrap items-center justify-between gap-3 py-2">
         <span className="text-sm font-medium text-mid">{t("lang.label")}</span>
-        <Segmented label={t("lang.label")} value={lang} onChange={setLang} options={[{ value: "uz", label: "O‘zbekcha" }, { value: "ru", label: "Русский" }]} />
+        <Segmented label={t("lang.label")} value={lang} onChange={setLang} options={[{ value: "uz", label: "O‘zbekcha" }, { value: "ru", label: "Русский" }, { value: "en", label: "English" }]} />
       </div>
       <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line py-2 pt-4">
         <span className="text-sm font-medium text-mid">{t("profile.theme")}</span>

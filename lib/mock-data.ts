@@ -52,6 +52,7 @@ const analysisBase: Record<string, A> = {
     summary: {
       uz: "Mehmonlar ovqat sifati, xodimlarning samimiyligi va tabiatni yuqori baholaydi. Eng ko‘p shikoyat narx/sifat nisbati va xona holati bo‘yicha. Basseyn va xonalar reklama rasmlarida haqiqatdagidan kattaroq ko‘rinadi. 2 ta sharh takroriy bo‘lgani uchun shubhali deb belgilandi. Oilaviy dam olish uchun mos, lekin byudjetni oldindan aniqlashtirish tavsiya etiladi.",
       ru: "Гости высоко оценивают кухню, доброжелательность персонала и природу. Больше всего жалоб на соотношение цены и качества и состояние номеров. Бассейн и номера на рекламных фото выглядят больше, чем в реальности. 2 отзыва помечены как подозрительные из-за повторов. Подходит для семейного отдыха, но бюджет лучше уточнить заранее.",
+      en: "Guests rate the food, the friendliness of the staff and the nature highly. Most complaints concern value for money and the condition of the rooms. The pool and rooms look bigger in the advertising photos than in reality. 2 reviews were flagged as suspicious because they repeat each other. Suitable for a family holiday, but it is worth checking the budget in advance.",
     },
     strengths: ["food", "staff", "location"],
     problems: [{ topic: "price", mentions: 6 }, { topic: "room", mentions: 4 }, { topic: "cleanliness", mentions: 3 }, { topic: "service", mentions: 3 }],
@@ -62,6 +63,7 @@ const analysisBase: Record<string, A> = {
     summary: {
       uz: "Manzara va joylashuv yuqori baholanadi, ammo sohil va hududning tozaligi bo‘yicha shikoyatlar ko‘p. Sharhlarning sezilarli qismi qisqa va bir xil — ularning ishonchliligi past. Yuqori reyting (4.8) real tajribani to‘liq aks ettirmasligi mumkin.",
       ru: "Высоко оценивают вид и расположение, но много жалоб на чистоту пляжа и территории. Значительная часть отзывов короткие и однотипные — их надёжность низкая. Высокий рейтинг (4.8) может не полностью отражать реальный опыт.",
+      en: "The view and location are rated highly, but there are many complaints about the cleanliness of the beach and grounds. A large share of the reviews are short and similar — their reliability is low. The high rating (4.8) may not fully reflect the real experience.",
     },
     strengths: ["location", "food"],
     problems: [{ topic: "cleanliness", mentions: 11 }, { topic: "price", mentions: 7 }, { topic: "service", mentions: 5 }],
@@ -72,6 +74,7 @@ const analysisBase: Record<string, A> = {
     summary: {
       uz: "Sharhlar ishonchli va izchil. Tabiat, toza havo va xodimlar alohida maqtaladi. Ayrim xonalar eski, lekin reklama rasmlari real holatga mos. Narx/sifat nisbati yaxshi.",
       ru: "Отзывы надёжные и последовательные. Отдельно хвалят природу, чистый воздух и персонал. Некоторые номера устаревшие, но рекламные фото соответствуют реальности. Хорошее соотношение цены и качества.",
+      en: "Reviews are reliable and consistent. Guests especially praise the nature, fresh air and staff. Some rooms are dated, but the advertising photos match reality. Good value for money.",
     },
     strengths: ["staff", "location", "cleanliness"],
     problems: [{ topic: "room", mentions: 4 }, { topic: "food", mentions: 2 }],
@@ -82,6 +85,7 @@ const analysisBase: Record<string, A> = {
     summary: {
       uz: "Joylashuv va tinchlik yoqadi, ovqat sifati va menyu tanlovi bo‘yicha shikoyatlar bor. Reklama–real mosligini baholash uchun rasmlar yetarli emas.",
       ru: "Нравятся расположение и тишина, есть жалобы на качество еды и выбор меню. Для оценки соответствия рекламы реальности недостаточно фотографий.",
+      en: "Guests like the location and the quiet, but there are complaints about food quality and menu choice. There are not enough photos to assess how well the ads match reality.",
     },
     strengths: ["location"],
     problems: [{ topic: "food", mentions: 7 }, { topic: "service", mentions: 3 }, { topic: "room", mentions: 2 }],
@@ -92,6 +96,7 @@ const analysisBase: Record<string, A> = {
     summary: {
       uz: "Xizmat tezligi va xodimlar munosabati bo‘yicha jiddiy shikoyatlar mavjud. Reklama rasmlari real holatdan sezilarli farq qiladi. Tanlashdan oldin so‘nggi sharhlarni o‘qib chiqish tavsiya etiladi.",
       ru: "Есть серьёзные жалобы на скорость обслуживания и отношение персонала. Рекламные фото заметно отличаются от реальности. Перед выбором рекомендуется прочитать последние отзывы.",
+      en: "There are serious complaints about the speed of service and the attitude of the staff. The advertising photos differ noticeably from reality. Read the latest reviews before choosing.",
     },
     strengths: ["pool"],
     problems: [{ topic: "service", mentions: 12 }, { topic: "staff", mentions: 8 }, { topic: "cleanliness", mentions: 6 }, { topic: "price", mentions: 5 }],
@@ -102,6 +107,7 @@ const analysisBase: Record<string, A> = {
     summary: {
       uz: "Oshxona va xizmat yuqori darajada. Asosiy kamchilik — narxlar yuqoriligi. Reklama real holatga yaqin.",
       ru: "Кухня и сервис на высоком уровне. Главный минус — высокие цены. Реклама близка к реальности.",
+      en: "The kitchen and service are excellent. The main drawback is high prices. The advertising is close to reality.",
     },
     strengths: ["food", "staff", "cleanliness"],
     problems: [{ topic: "price", mentions: 9 }, { topic: "location", mentions: 2 }],
@@ -112,6 +118,7 @@ const analysisBase: Record<string, A> = {
     summary: {
       uz: "Sharhlar soni juda kam (4 ta). Ishonchli xulosa chiqarish uchun ma’lumot yetarli emas.",
       ru: "Отзывов очень мало (4). Недостаточно данных для надёжного вывода.",
+      en: "There are very few reviews (4). Not enough data for a reliable conclusion.",
     },
     strengths: [],
     problems: [],
@@ -122,6 +129,7 @@ const analysisBase: Record<string, A> = {
     summary: {
       uz: "Ovqat va tozalik yaxshi baholanadi. Ayrim xodimlarning munosabati bo‘yicha shikoyatlar bor. Narx/sifat nisbati mos.",
       ru: "Хорошо оценивают еду и чистоту. Есть жалобы на отношение отдельных сотрудников. Соотношение цены и качества адекватное.",
+      en: "Food and cleanliness are rated well. There are complaints about the attitude of some staff. Value for money is fair.",
     },
     strengths: ["food", "cleanliness"],
     problems: [{ topic: "staff", mentions: 6 }, { topic: "room", mentions: 3 }],

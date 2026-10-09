@@ -80,14 +80,59 @@ export async function getResortsByIds(ids: string[]): Promise<Resort[]> {
 export async function getReviews(id: string): Promise<Review[]> {
   if (API_URL) return http(`/resorts/${id}/reviews`);
   await delay(150);
-  return reviews.filter((r) => r.resort_id === id);
+  return [...readMyReviews().filter((r) => r.resort_id === id), ...reviews.filter((r) => r.resort_id === id)];
 }
 
-// POST /api/v1/resorts/{id}/reviews
-export async function addReview(id: string, data: { rating: number; text: string; date: string }): Promise<{ ok: true }> {
+// Demo: foydalanuvchi sharhlari brauzerda saqlanadi (backend ulanganda — POST javobi)
+const MY_REVIEWS = "my-reviews";
+function readMyReviews(): Review[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const v = JSON.parse(localStorage.getItem(MY_REVIEWS) ?? "[]");
+    return Array.isArray(v) ? v : [];
+  } catch {
+    return [];
+  }
+}
+
+// Demo: matndan mavzularni taxminiy aniqlash (haqiqiy tahlilni backenddagi AI qiladi)
+const TOPIC_WORDS: [Topic, RegExp][] = [
+  ["cleanliness", /toza|iflos|чист|гряз|clean|dirt/i],
+  ["food", /ovqat|taom|nonushta|еда|кухн|завтрак|food|breakfast|meal/i],
+  ["service", /xizmat|сервис|обслуж|service/i],
+  ["staff", /xodim|administrator|персонал|сотрудник|staff/i],
+  ["price", /narx|qimmat|arzon|цен|дорог|дешев|price|expensive|cheap/i],
+  ["room", /xona|номер|room/i],
+  ["pool", /basseyn|бассейн|pool/i],
+  ["location", /joylash|tabiat|manzara|располож|природ|location|view|nature/i],
+  ["safety", /xavfsiz|безопас|safe/i],
+];
+
+export interface NewReview { author: string; rating: number; text: string; date: string; language: Review["language"] }
+
+// POST /api/v1/resorts/{id}/reviews — yaratilgan sharhni qaytaradi
+export async function addReview(id: string, data: NewReview): Promise<Review> {
   if (API_URL) return http(`/resorts/${id}/reviews`, { method: "POST", body: JSON.stringify(data) });
   await delay(600);
-  return { ok: true };
+  const topics = TOPIC_WORDS.filter(([, re]) => re.test(data.text)).map(([t]) => t);
+  const review: Review = {
+    id: `u-${Date.now()}`,
+    resort_id: id,
+    author: data.author,
+    rating: data.rating,
+    text: data.text.trim(),
+    source: "site",
+    date: data.date,
+    language: data.language,
+    sentiment: data.rating >= 4 ? "positive" : data.rating === 3 ? "neutral" : "negative",
+    sentiment_score: data.rating / 5,
+    fake_probability: 0,
+    topics: topics.length ? topics : ["other"],
+    flags: [],
+    status: "pending",
+  };
+  try { localStorage.setItem(MY_REVIEWS, JSON.stringify([review, ...readMyReviews()])); } catch {}
+  return review;
 }
 
 // Demo: oldingi tahlil — joriy ko‘rsatkichlardan barqaror farq bilan yasaladi
@@ -168,14 +213,15 @@ export async function compareImages(ad: File, real: File): Promise<ImageCompareR
   return {
     match_percent: 69,
     differences: [
-      { label: { uz: "Basseyn reklamada kattaroq ko‘rinadi", ru: "Бассейн на рекламе выглядит больше" }, severity: "high", ad: { x: 48, y: 82 }, real: { x: 35, y: 82 } },
-      { label: { uz: "Osmon va ranglar kuchaytirilgan", ru: "Небо и цвета усилены" }, severity: "medium", ad: { x: 25, y: 22 }, real: { x: 25, y: 22 } },
-      { label: { uz: "Bino oynalari va tom rangi o‘chgan", ru: "Окна и крыша здания выцвели" }, severity: "medium", ad: { x: 77, y: 48 }, real: { x: 77, y: 48 } },
-      { label: { uz: "Hovlidagi o‘t-o‘lan quruqroq", ru: "Газон во дворе суше" }, severity: "low", ad: { x: 15, y: 68 }, real: { x: 15, y: 68 } },
+      { label: { uz: "Basseyn reklamada kattaroq ko‘rinadi", ru: "Бассейн на рекламе выглядит больше", en: "The pool looks bigger in the ad" }, severity: "high", ad: { x: 48, y: 82 }, real: { x: 35, y: 82 } },
+      { label: { uz: "Osmon va ranglar kuchaytirilgan", ru: "Небо и цвета усилены", en: "Sky and colours are enhanced" }, severity: "medium", ad: { x: 25, y: 22 }, real: { x: 25, y: 22 } },
+      { label: { uz: "Bino oynalari va tom rangi o‘chgan", ru: "Окна и крыша здания выцвели", en: "Windows and roof look faded" }, severity: "medium", ad: { x: 77, y: 48 }, real: { x: 77, y: 48 } },
+      { label: { uz: "Hovlidagi o‘t-o‘lan quruqroq", ru: "Газон во дворе суше", en: "The lawn is drier in reality" }, severity: "low", ad: { x: 15, y: 68 }, real: { x: 15, y: 68 } },
     ],
     note: {
       uz: "Faqat ko‘rinadigan farqlar qayd etildi. Bu ekspert xulosasi emas — AI indikatori.",
       ru: "Отмечены только видимые различия. Это не экспертное заключение, а индикатор AI.",
+      en: "Only visible differences are noted. This is an AI indicator, not an expert conclusion.",
     },
   };
 }

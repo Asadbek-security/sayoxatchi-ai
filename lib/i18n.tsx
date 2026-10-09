@@ -1,6 +1,7 @@
 "use client";
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import type { Lang, Localized } from "./types";
+import { en } from "./i18n-en";
 
 // O‘zbekcha matnlarda to‘g‘ri belgilar: o‘ / g‘ (U+2018), tutuq belgisi ’ (U+2019).
 const uz = {
@@ -12,7 +13,7 @@ const uz = {
   "nav.profile": "Profil",
   "nav.admin": "Admin",
   "nav.versus": "Solishtirish",
-  "nav.trust": "Trust Score",
+  "nav.trust": "Ishonch bahosi",
   "nav.icons": "Ikonkalar",
   "nav.menu": "Asosiy menyu",
 
@@ -36,14 +37,14 @@ const uz = {
   "home.all": "Barchasi",
   "home.recent": "Yaqinda ko‘rilganlar",
   "home.recentClear": "Tozalash",
-  "home.how": "Trust Score qanday ishlaydi?",
+  "home.how": "Ishonch bahosi qanday hisoblanadi?",
   "home.how1.t": "Sharhlarni tahlil qiladi",
   "home.how1.d": "AI yuzlab sharhlarni mavzular bo‘yicha ajratadi: tozalik, ovqat, xizmat, narx va boshqalar.",
   "home.how2.t": "Shubhali sharhlarni belgilaydi",
   "home.how2.d": "Takroriy va reklama xarakteridagi sharhlar bahoga kamroq ta’sir qiladi. Bu hukm emas — tekshiruv indikatori.",
   "home.how3.t": "Reklama va realni solishtiradi",
   "home.how3.d": "Reklama rasmini mehmonlarning real rasmlari bilan solishtiradi va ko‘rinadigan farqlarni ko‘rsatadi.",
-  "home.howLink": "Trust Score qanday ishlaydi?",
+  "home.howLink": "Ishonch bahosi qanday hisoblanadi?",
   "ts.subtitle": "Bitta raqam ortida nima turadi: qaysi ko‘rsatkichlar hisobga olinadi va ular bahoga qanchalik ta’sir qiladi.",
   "ts.weights": "Ko‘rsatkichlar va ularning og‘irligi",
   "ts.scale": "Baholash shkalasi",
@@ -63,7 +64,7 @@ const uz = {
   "loc.green.d": "Bog‘lar, o‘rmonlar va yaylovlar — oilaviy dam olish uchun sokin joylar.",
   "loc.water.d": "Chorvoq, Urungach, sharsharalar — suv bo‘yida salqin dam olish.",
   "loc.count": "ta maskan",
-  "loc.avg": "o‘rtacha Trust Score",
+  "loc.avg": "o‘rtacha ishonch bahosi",
   "loc.cta": "Maskanlarni ko‘rish",
   "loc.photo": "Foto",
   "loc.all": "Barcha turlar",
@@ -73,11 +74,11 @@ const uz = {
   "search.district": "Tuman",
   "search.allRegions": "Barcha viloyatlar",
   "search.allDistricts": "Barcha tumanlar",
-  "search.minScore": "Trust Score kamida",
+  "search.minScore": "Ishonch bahosi kamida",
   "search.minRating": "Reyting kamida",
   "search.any": "Istalgan",
   "search.sort": "Saralash",
-  "search.sort.score": "Trust Score bo‘yicha",
+  "search.sort.score": "Ishonch bahosi bo‘yicha",
   "search.sort.rating": "Reyting bo‘yicha",
   "search.sort.price": "Arzonroq avval",
   "search.found": "ta maskan topildi",
@@ -96,7 +97,7 @@ const uz = {
   "card.compareAdd": "Solishtirishga qo‘shish",
   "card.compareIn": "Solishtirishda",
 
-  "score.label": "Trust Score",
+  "score.label": "Ishonch bahosi",
   "score.good": "Ishonchli",
   "score.mid": "O‘rtacha",
   "score.bad": "Ehtiyot bo‘ling",
@@ -150,7 +151,7 @@ const uz = {
   "resort.shared": "Havola nusxalandi",
   "resort.shareTelegram": "Telegram’da ulashish",
   "resort.copyLink": "Havolani nusxalash",
-  "resort.shareText": "AI hisoboti: Trust Score",
+  "resort.shareText": "AI hisoboti: ishonch bahosi",
   "resort.notFound": "Maskan topilmadi",
   "resort.back": "Qidiruvga qaytish",
   "resort.noProblems": "Muammolar aniqlanmadi",
@@ -162,6 +163,25 @@ const uz = {
   "resort.analysisPanel": "AI tahlil paneli",
   "resort.errorLoad": "Ma’lumotni yuklab bo‘lmadi. Internet aloqasini tekshirib, qayta urinib ko‘ring.",
   "resort.retry": "Qayta urinish",
+  "resort.location": "Joylashuv",
+  "resort.openGoogle": "Google Maps’da ochish",
+  "resort.openYandex": "Yandex Kartada ochish",
+  "resort.route": "Yo‘nalish olish",
+  "resort.copyAddress": "Manzilni nusxalash",
+  "resort.copied": "Nusxalandi",
+  "resort.mapCredit": "Xarita: © OpenStreetMap hissadorlari",
+  "resort.writeReview": "Sharh qoldiring",
+  "resort.writeReviewDesc": "Tajribangiz boshqa sayohatchilarga to‘g‘ri tanlov qilishga yordam beradi. Sharh AI tahliliga ham qo‘shiladi.",
+  "review.mine": "Sizning sharhingiz",
+  "review.pending": "Moderatsiyada",
+  "add.name": "Ismingiz",
+  "add.namePh": "Masalan: Dilnoza",
+  "add.successInline": "Rahmat! Sharhingiz ro‘yxatga qo‘shildi va moderatsiyadan so‘ng hammaga ko‘rinadi.",
+  "add.another": "Yana sharh yozish",
+  "add.guest": "Mehmon",
+  "lang.uz": "O‘zbekcha",
+  "lang.ru": "Русский",
+  "lang.en": "English",
 
   "step.queued": "Navbatda",
   "step.sentiment": "Sentiment",
@@ -239,7 +259,7 @@ const uz = {
   "cmp.slider": "Surib solishtiring",
 
   "vs.title": "Maskanlarni solishtirish",
-  "vs.subtitle": "2–3 ta maskanni yonma-yon ko‘ring: Trust Score va 7 ko‘rsatkich bitta jadvalda.",
+  "vs.subtitle": "2–3 ta maskanni yonma-yon ko‘ring: ishonch bahosi va 7 ko‘rsatkich bitta jadvalda.",
   "vs.empty": "Hali maskan tanlanmagan. Qidiruvda kartochkadagi “Solishtirishga qo‘shish” tugmasini bosing.",
   "vs.add": "Maskan qo‘shish",
   "vs.remove": "Olib tashlash",
@@ -342,7 +362,7 @@ const ru: Record<DictKey, string> = {
   "nav.profile": "Профиль",
   "nav.admin": "Админ",
   "nav.versus": "Сравнение",
-  "nav.trust": "Trust Score",
+  "nav.trust": "Индекс доверия",
   "nav.icons": "Иконки",
   "nav.menu": "Главное меню",
 
@@ -366,14 +386,14 @@ const ru: Record<DictKey, string> = {
   "home.all": "Все",
   "home.recent": "Недавно просмотренные",
   "home.recentClear": "Очистить",
-  "home.how": "Как работает Trust Score?",
+  "home.how": "Как считается индекс доверия?",
   "home.how1.t": "Анализирует отзывы",
   "home.how1.d": "AI раскладывает сотни отзывов по темам: чистота, еда, сервис, цена и другие.",
   "home.how2.t": "Отмечает подозрительные отзывы",
   "home.how2.d": "Повторяющиеся и рекламные отзывы меньше влияют на оценку. Это не приговор — лишь индикатор для проверки.",
   "home.how3.t": "Сравнивает рекламу и реальность",
   "home.how3.d": "Сравнивает рекламное фото с реальными фото гостей и показывает видимые различия.",
-  "home.howLink": "Как работает Trust Score?",
+  "home.howLink": "Как считается индекс доверия?",
   "ts.subtitle": "Что стоит за одним числом: какие показатели учитываются и насколько каждый влияет на оценку.",
   "ts.weights": "Показатели и их вес",
   "ts.scale": "Шкала оценки",
@@ -393,7 +413,7 @@ const ru: Record<DictKey, string> = {
   "loc.green.d": "Сады, леса и луга — спокойные места для семейного отдыха.",
   "loc.water.d": "Чарвак, Урунгач, водопады — прохладный отдых у воды.",
   "loc.count": "мест",
-  "loc.avg": "средний Trust Score",
+  "loc.avg": "средний индекс доверия",
   "loc.cta": "Смотреть места",
   "loc.photo": "Фото",
   "loc.all": "Все типы",
@@ -403,11 +423,11 @@ const ru: Record<DictKey, string> = {
   "search.district": "Район",
   "search.allRegions": "Все области",
   "search.allDistricts": "Все районы",
-  "search.minScore": "Trust Score от",
+  "search.minScore": "Индекс доверия от",
   "search.minRating": "Рейтинг от",
   "search.any": "Любой",
   "search.sort": "Сортировка",
-  "search.sort.score": "По Trust Score",
+  "search.sort.score": "По индексу доверия",
   "search.sort.rating": "По рейтингу",
   "search.sort.price": "Сначала дешевле",
   "search.found": "мест найдено",
@@ -426,7 +446,7 @@ const ru: Record<DictKey, string> = {
   "card.compareAdd": "Добавить к сравнению",
   "card.compareIn": "В сравнении",
 
-  "score.label": "Trust Score",
+  "score.label": "Индекс доверия",
   "score.good": "Надёжно",
   "score.mid": "Средне",
   "score.bad": "Будьте осторожны",
@@ -480,7 +500,7 @@ const ru: Record<DictKey, string> = {
   "resort.shared": "Ссылка скопирована",
   "resort.shareTelegram": "Отправить в Telegram",
   "resort.copyLink": "Скопировать ссылку",
-  "resort.shareText": "AI-отчёт: Trust Score",
+  "resort.shareText": "AI-отчёт: индекс доверия",
   "resort.notFound": "Место не найдено",
   "resort.back": "Вернуться к поиску",
   "resort.noProblems": "Проблем не выявлено",
@@ -492,6 +512,25 @@ const ru: Record<DictKey, string> = {
   "resort.analysisPanel": "Панель AI-анализа",
   "resort.errorLoad": "Не удалось загрузить данные. Проверьте подключение к интернету и попробуйте снова.",
   "resort.retry": "Повторить",
+  "resort.location": "Расположение",
+  "resort.openGoogle": "Открыть в Google Maps",
+  "resort.openYandex": "Открыть в Яндекс Картах",
+  "resort.route": "Проложить маршрут",
+  "resort.copyAddress": "Скопировать адрес",
+  "resort.copied": "Скопировано",
+  "resort.mapCredit": "Карта: © участники OpenStreetMap",
+  "resort.writeReview": "Оставьте отзыв",
+  "resort.writeReviewDesc": "Ваш опыт поможет другим путешественникам сделать правильный выбор. Отзыв также попадёт в AI-анализ.",
+  "review.mine": "Ваш отзыв",
+  "review.pending": "На модерации",
+  "add.name": "Ваше имя",
+  "add.namePh": "Например: Дилноза",
+  "add.successInline": "Спасибо! Отзыв добавлен в список и станет виден всем после модерации.",
+  "add.another": "Написать ещё отзыв",
+  "add.guest": "Гость",
+  "lang.uz": "O‘zbekcha",
+  "lang.ru": "Русский",
+  "lang.en": "English",
 
   "step.queued": "В очереди",
   "step.sentiment": "Тональность",
@@ -569,7 +608,7 @@ const ru: Record<DictKey, string> = {
   "cmp.slider": "Двигайте, чтобы сравнить",
 
   "vs.title": "Сравнение мест",
-  "vs.subtitle": "Смотрите 2–3 места рядом: Trust Score и 7 показателей в одной таблице.",
+  "vs.subtitle": "Смотрите 2–3 места рядом: индекс доверия и 7 показателей в одной таблице.",
   "vs.empty": "Пока ничего не выбрано. В поиске нажмите «Добавить к сравнению» на карточке.",
   "vs.add": "Добавить место",
   "vs.remove": "Убрать",
@@ -661,7 +700,8 @@ const ru: Record<DictKey, string> = {
   "common.close": "Закрыть",
 };
 
-const dicts: Record<Lang, Record<DictKey, string>> = { uz, ru };
+const dicts: Record<Lang, Record<DictKey, string>> = { uz, ru, en };
+export const LANGS: Lang[] = ["uz", "ru", "en"];
 
 interface Ctx {
   lang: Lang;
@@ -679,7 +719,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     try {
       const saved = localStorage.getItem("lang");
-      if (saved === "uz" || saved === "ru") setLangState(saved);
+      if (saved === "uz" || saved === "ru" || saved === "en") setLangState(saved);
     } catch {}
   }, []);
 
@@ -695,7 +735,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
   const t = useCallback((k: DictKey) => dicts[lang][k] ?? k, [lang]);
   const l = useCallback((v: Localized) => v[lang], [lang]);
   const fmtDate = useCallback(
-    (iso: string) => new Date(iso).toLocaleDateString(lang === "ru" ? "ru-RU" : "uz-UZ", { day: "numeric", month: "short", year: "numeric" }),
+    (iso: string) => new Date(iso).toLocaleDateString({ ru: "ru-RU", uz: "uz-UZ", en: "en-GB" }[lang], { day: "numeric", month: "short", year: "numeric" }),
     [lang],
   );
 

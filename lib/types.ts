@@ -1,7 +1,7 @@
 // Ma'lumot turlari TZdagi DB sxemasiga mos (11-bo'lim).
 // Backend tayyor bo'lgach, API javoblari shu turlarga mos kelishi kerak.
 
-export type Lang = "uz" | "ru";
+export type Lang = "uz" | "ru" | "en";
 export type Localized = Record<Lang, string>;
 
 export type Topic =
@@ -56,6 +56,8 @@ export interface Review {
   topics: Topic[];
   /** Nima uchun shubhali deb belgilangan (hukm emas, faqat indikator) */
   flags: FlagReason[];
+  /** Foydalanuvchi yangi yozgan sharh — moderatsiya kutilmoqda */
+  status?: "pending";
 }
 
 export type FlagReason = "duplicate" | "burst" | "no_details" | "extreme" | "new_account";

@@ -464,3 +464,6 @@ html, body { overflow-x: clip; }
     linear-gradient(90deg, rgba(238, 247, 242, 0.55) 0%, rgba(238, 247, 242, 0.12) 55%, transparent 100%),
     linear-gradient(180deg, rgba(238, 247, 242, 0.45) 0%, transparent 25%, transparent 70%, rgba(238, 247, 242, 0.6) 100%);
 }
+
+/* OpenStreetMap — qorong‘i mavzuda xaritani qoraytirish */
+:root:not([data-theme="light"]) .osm-map { filter: invert(0.9) hue-rotate(180deg) saturate(0.55) brightness(0.95) contrast(0.9); }

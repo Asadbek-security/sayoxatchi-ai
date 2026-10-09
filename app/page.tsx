@@ -94,7 +94,7 @@ export default function HomePage() {
 
         <motion.div style={{ y: orbY }} className="relative flex min-w-0 justify-center lg:col-span-5 lg:justify-end">
           <Glass level={3} className="relative flex flex-col items-center px-8 pb-6 pt-8 lg:mt-24 lg:translate-x-4">
-            <span className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-low">Trust Score</span>
+            <span className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-low">{t("score.label")}</span>
             {demo ? <TrustOrb score={demo.overall} confidence={demo.confidence} size={232} caption={t("home.orbCaption")} /> : <Skeleton className="size-56 rounded-full" />}
             <div className="mt-4 flex flex-col items-center gap-1">
               <Link href="/resort/yashil-vodiy" className="inline-flex h-10 items-center gap-1.5 text-sm font-semibold text-mint hover:underline">

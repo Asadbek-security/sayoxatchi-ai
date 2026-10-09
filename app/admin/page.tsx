@@ -110,7 +110,7 @@ export default function AdminPage() {
           {tab === "resorts" && (
             <Panel title={t("admin.resorts")} action={<Button size="sm" onClick={() => setShowForm((v) => !v)}><IconPlus size={16} /> {t("admin.add")}</Button>}>
               {showForm && <ResortForm onCancel={() => setShowForm(false)} onSave={(r) => { setResorts((x) => [r, ...x]); setShowForm(false); }} />}
-              <Table head={[t("admin.name"), t("admin.region"), "Trust Score", t("admin.actions")]}>
+              <Table head={[t("admin.name"), t("admin.region"), t("score.label"), t("admin.actions")]}>
                 {resorts.map((r) => (
                   <tr key={r.id}>
                     <td className="font-semibold">{r.name}</td>

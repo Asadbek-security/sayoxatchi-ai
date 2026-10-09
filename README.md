@@ -18,7 +18,7 @@ npm run dev      # http://localhost:3000
 | `/` | Bosh sahifa: kutib olish ekrani (qidiruv, Trust Orb), so‘ng lokatsiyalar bo‘ylab skroll (fon almashadi), pastda “Qayerda dam olmoqchisiz?” va yaqinda ko‘rilganlar |
 | `/trust-score` | Trust Score qanday ishlaydi, ko‘rsatkichlar og‘irligi, baholash shkalasi, mashhur maskanlar |
 | `/search` | Qidiruv: viloyat, tuman, Trust Score slayderi, reyting, saralash (mobilda — bottom sheet) |
-| `/resort/[id]` | Maskan profili: Trust Orb, AI xulosa, 7 suyuq naycha, muammolar, mavzular balansi, ulashish |
+| `/resort/[id]` | Maskan profili: Trust Orb, AI xulosa, 7 suyuq naycha, muammolar, mavzular balansi, ulashish, sharh qoldirish formasi, joylashuv (OpenStreetMap xaritasi, Google/Yandex havolalari) |
 | `/resort/[id]/analysis` | AI tahlil paneli: bosqichlar, natija, oldingi tahlildan farq |
 | `/resort/[id]/reviews` | Barcha sharhlar: kayfiyat / mavzu / ishonchlilik filtrlari |
 | `/resort/[id]/review` | Sharh qoldirish formasi |
@@ -29,7 +29,7 @@ npm run dev      # http://localhost:3000
 | `/admin` | Admin: dashboard, maskanlar, moderatsiya, rasmlar, AI jobs, foydalanuvchilar |
 | `/icons` | Ikonkalar tizimi (barcha o‘lcham va holatlar) |
 
-Til: o‘zbekcha / ruscha. Mavzu: qorong‘i (asosiy) / yorug‘. Tarjimalar — `lib/i18n.tsx`.
+Til: o‘zbekcha / ruscha / inglizcha. Mavzu: qorong‘i (asosiy) / yorug‘. Tarjimalar — `lib/i18n.tsx` (uz, ru) va `lib/i18n-en.ts` (en).
 
 ## Dizayn
 
@@ -52,6 +52,7 @@ Lokatsiya turi (`locations` maydoni: `mountain | snow | green | water`) — `lib
 - Trust Score formulasi (TZ 14.4) — [`lib/score.ts`](lib/score.ts). Backend o'zi hisoblasa, `overall` maydonini yuborish kifoya.
 - Admin bo'limidagi `adminStats/adminJobs/adminUsers/adminReviews` hozircha faqat mock — admin endpointlari qo'shilganda shu funksiyalarni almashtiring.
 - Kirish (JWT) hozircha faqat dizayn: `app/profile/page.tsx`.
+- Sharh qoldirish: `addReview()` yaratilgan sharhni qaytarishi kerak (`Review`, `status: "pending"`). Demo rejimida sharhlar brauzerda (`localStorage`) saqlanadi.
 - Demo ma'lumotlar — [`lib/mock-data.ts`](lib/mock-data.ts). Maskan nomlari o'ylab topilgan.
 
 ## Texnologiyalar

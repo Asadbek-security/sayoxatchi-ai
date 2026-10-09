@@ -10,9 +10,10 @@ import { useCompare, useRecent, useSaved } from "@/lib/store";
 import type { AiAnalysis, Resort, Review, TopicBalance } from "@/lib/types";
 import {
   IconAdMatch, IconAlert, IconArrowRight, IconBack, IconCheck, IconCompareResorts, IconEdit, IconJobs, IconLink, IconLocation,
-  IconRefresh, IconReliability, IconSaved, IconSend, IconShare, IconSummary, IconTrust,
+  IconRefresh, IconReliability, IconSaved, IconSend, IconShare, IconSummary, IconTrust, locationIcon,
 } from "@/components/icons";
 import { AnalysisSteps, LiquidTube, ReviewItem, Scene, TopicBalanceChart, TrustOrb } from "@/components/signature";
+import { ReviewForm } from "@/components/ReviewForm";
 import { Button, ButtonLink, cn, Condense, Disclaimer, EASE, ErrorState, Glass, LevelLabel, SectionTitle, Skeleton, Stars, TopicChip } from "@/components/ui";
 
 export default function ResortPage() {
@@ -75,7 +76,7 @@ export default function ResortPage() {
         <div className="relative -mt-20 flex flex-col gap-5 px-5 pb-6 md:-mt-24 md:flex-row md:items-end md:justify-between md:px-8 md:pb-8">
           <div>
             <h1 className="font-display text-[34px] font-extrabold leading-tight text-hi md:text-5xl">{resort.name}</h1>
-            <p className="mt-2 flex items-center gap-1.5 text-mid"><IconLocation size={20} className="text-mint" /> {resort.region}, {resort.district} · {resort.address}</p>
+            <a href="#location" className="mt-2 flex items-center gap-1.5 text-mid underline-offset-4 hover:text-hi hover:underline"><IconLocation size={20} className="text-mint" /> {resort.region}, {resort.district} · {resort.address}</a>
             <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
               <span className="flex items-center gap-1.5"><Stars value={resort.rating} /> <span className="num text-base">{resort.rating}</span> <span className="text-low">· {resort.review_count} {t("card.reviews")}</span></span>
               <span className="text-mid">{t("card.from")} <span className="num text-base text-hi">{resort.price_from.toLocaleString("ru-RU")}</span> {t("card.perNight")}</span>
@@ -89,7 +90,7 @@ export default function ResortPage() {
             <Button variant="glass" onClick={() => cmp.toggle(resort.id)} aria-pressed={inCmp} disabled={!inCmp && cmp.full} title={!inCmp && cmp.full ? t("vs.max") : undefined}>
               {inCmp ? <IconCheck size={20} className="text-mint" /> : <IconCompareResorts size={20} />} {inCmp ? t("card.compareIn") : t("nav.versus")}
             </Button>
-            <ButtonLink href={`/resort/${resort.id}/review`}><IconEdit size={20} /> {t("resort.addReview")}</ButtonLink>
+            <ButtonLink href="#write-review"><IconEdit size={20} /> {t("resort.addReview")}</ButtonLink>
           </div>
         </div>
       </header>
@@ -227,7 +228,85 @@ export default function ResortPage() {
           </div>
         )}
       </section>
+
+      {/* SHARH QOLDIRISH + JOYLASHUV */}
+      <div className="grid gap-5 lg:grid-cols-2">
+        <section id="write-review" className="scroll-mt-28">
+          <Glass level={2} className="h-full p-6 md:p-8">
+            <SectionTitle icon={<IconEdit size={24} />} sub={t("resort.writeReviewDesc")}>{t("resort.writeReview")}</SectionTitle>
+            <ReviewForm resortId={resort.id} onAdded={(r) => setReviews((list) => [r, ...list])} />
+          </Glass>
+        </section>
+        <LocationSection resort={resort} />
+      </div>
     </div>
+  );
+}
+
+/** Joylashuv: OpenStreetMap xaritasi (kalit talab qilinmaydi), manzil, tashqi xaritalar, lokatsiya turi */
+function LocationSection({ resort }: { resort: Resort }) {
+  const { t } = useI18n();
+  const [copied, setCopied] = useState(false);
+  const { lat, lng } = resort;
+  const d = 0.035;
+  const embed = `https://www.openstreetmap.org/export/embed.html?bbox=${lng - d},${lat - d * 0.6},${lng + d},${lat + d * 0.6}&layer=mapnik&marker=${lat},${lng}`;
+  const address = `${resort.address}, ${resort.district}, ${resort.region}`;
+  const copy = async () => {
+    try { await navigator.clipboard.writeText(address); setCopied(true); setTimeout(() => setCopied(false), 2000); } catch {}
+  };
+  const links = [
+    { href: `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`, label: t("resort.openGoogle") },
+    { href: `https://yandex.uz/maps/?pt=${lng},${lat}&z=13&l=map`, label: t("resort.openYandex") },
+  ];
+  return (
+    <section id="location" className="scroll-mt-28">
+      <Glass level={2} className="flex h-full flex-col p-6 md:p-8">
+        <SectionTitle icon={<IconLocation size={24} />}>{t("resort.location")}</SectionTitle>
+        <div className="relative overflow-hidden rounded-3xl ring-1 ring-[color:var(--line)]">
+          <iframe title={`${t("resort.location")}: ${resort.name}`} src={embed} loading="lazy" referrerPolicy="no-referrer"
+            className="osm-map block h-72 w-full border-0 md:h-80" />
+        </div>
+        <p className="mt-2 text-[11px] text-low">{t("resort.mapCredit")}</p>
+
+        <div className="mt-4 flex flex-wrap items-start gap-x-3 gap-y-2 rounded-2xl bg-[color:var(--glass-bottom)] p-4">
+          <IconLocation size={20} className="mt-0.5 text-mint" />
+          <div className="min-w-[12rem] flex-1">
+            <p className="font-medium text-hi">{address}</p>
+            <p className="num mt-0.5 text-xs text-low">{lat.toFixed(4)}, {lng.toFixed(4)}</p>
+          </div>
+          <button onClick={copy} className="ml-8 shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold text-mint hover:bg-[color:var(--glass-top)] sm:ml-0">
+            {copied ? t("resort.copied") : t("resort.copyAddress")}
+          </button>
+        </div>
+
+        {resort.locations.length > 0 && (
+          <div className="mt-4">
+            <p className="mb-2 text-sm font-semibold text-mid">{t("search.location")}</p>
+            <div className="flex flex-wrap gap-2">
+              {resort.locations.map((k) => {
+                const Icon = locationIcon[k];
+                return (
+                  <Link key={k} href={`/search?loc=${k}`} className="glass g1 inline-flex h-10 items-center gap-1.5 rounded-full! px-4 text-sm font-medium text-hi hover:-translate-y-px [--r:999px]">
+                    <Icon size={16} className="text-mint" /> {t(`loc.${k}` as DictKey)}
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        <div className="mt-auto flex flex-wrap gap-2 pt-5">
+          <a href={`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`} target="_blank" rel="noreferrer" className="btn-liquid inline-flex h-11 items-center gap-2 rounded-full px-5 text-sm font-semibold">
+            <IconSend size={20} /> {t("resort.route")}
+          </a>
+          {links.map((l) => (
+            <a key={l.href} href={l.href} target="_blank" rel="noreferrer" className="glass g1 inline-flex h-11 items-center rounded-full! px-4 text-sm font-semibold text-hi hover:-translate-y-px [--r:999px]">
+              {l.label}
+            </a>
+          ))}
+        </div>
+      </Glass>
+    </section>
   );
 }
 

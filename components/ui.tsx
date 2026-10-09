@@ -114,11 +114,12 @@ const levelKey = { good: "score.good", mid: "score.mid", bad: "score.bad", none:
 
 /** Kichik orb-badge (kartochkalar uchun) */
 export function ScoreBadge({ score, size = 52 }: { score: number | null; size?: number }) {
+  const { t } = useI18n();
   const lvl = scoreLevel(score);
   const pct = score ?? 0;
   const id = useId();
   return (
-    <span className="relative inline-grid shrink-0 place-items-center" style={{ width: size, height: size }} title={`Trust Score ${score ?? "—"}`}>
+    <span className="relative inline-grid shrink-0 place-items-center" style={{ width: size, height: size }} title={`${t("score.label")}: ${score ?? "—"}`}>
       <svg viewBox="0 0 40 40" className="absolute inset-0 size-full" aria-hidden>
         <defs>
           <clipPath id={`c${id}`}><circle cx="20" cy="20" r="17" /></clipPath>

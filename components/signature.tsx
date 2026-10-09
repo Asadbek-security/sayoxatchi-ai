@@ -64,7 +64,7 @@ export function TrustOrb({ score, size = 240, confidence, caption }: {
   const lowConf = confidence === "low" || score == null;
 
   return (
-    <figure className="flex flex-col items-center gap-3" aria-label={`Trust Score: ${score ?? t("score.none")}`}>
+    <figure className="flex flex-col items-center gap-3" aria-label={`${t("score.label")}: ${score ?? t("score.none")}`}>
       <div className="relative" style={{ width: size, height: size }}>
         {/* yumshoq shu’la */}
         <div className="absolute inset-[8%] rounded-full blur-2xl" style={{ background: c2, opacity: 0.28 }} />
@@ -312,7 +312,12 @@ export function ReviewItem({ r }: { r: Review }) {
   const suspicious = r.fake_probability >= SUSPICIOUS;
   const s = sentimentStyle[r.sentiment];
   return (
-    <Glass as="article" level={1} solid className={cn("p-5", suspicious && "dash-amber")}>
+    <Glass as="article" level={1} solid className={cn("p-5", suspicious && "dash-amber", r.status === "pending" && "ring-1 ring-[color:var(--mint)]/50")}>
+      {r.status === "pending" && (
+        <p className="mb-3 inline-flex h-7 items-center gap-1.5 rounded-full bg-[color:var(--glass-top)] px-2.5 text-xs font-semibold text-mint">
+          <IconCheck size={16} /> {t("review.mine")} · <span className="text-warn">{t("review.pending")}</span>
+        </p>
+      )}
       <header className="flex flex-wrap items-center gap-x-3 gap-y-2">
         <span className="grid size-10 place-items-center rounded-full bg-[color:var(--glass-top)] font-display text-sm font-bold text-mint">{r.author[0]}</span>
         <div className="min-w-0">
@@ -327,7 +332,7 @@ export function ReviewItem({ r }: { r: Review }) {
       <p className={cn("mt-3 max-w-[68ch] leading-relaxed text-hi", suspicious && "text-mid")}>{r.text}</p>
       <footer className="mt-3 flex flex-wrap items-center gap-1.5">
         {r.topics.map((tp) => <TopicChip key={tp} topic={tp} />)}
-        <span className="ml-auto">
+        <span className={cn("ml-auto", r.status === "pending" && "hidden")}>
           {suspicious ? (
             <Tooltip text={t("review.suspiciousHint")}>
               <span className="inline-flex h-7 items-center gap-1.5 rounded-full px-2.5 text-xs font-semibold text-warn" style={{ background: "color-mix(in srgb, var(--score-mid) 13%, transparent)" }}>

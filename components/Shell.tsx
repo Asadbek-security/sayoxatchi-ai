@@ -2,7 +2,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
-import { useI18n, type DictKey } from "@/lib/i18n";
+import { useEffect, useRef, useState } from "react";
+import { LANGS, useI18n, type DictKey } from "@/lib/i18n";
 import { useTheme } from "@/lib/theme";
 import { useCompare } from "@/lib/store";
 import {
@@ -34,16 +35,50 @@ const isActive = (path: string, href: string) => (href === "/" ? path === "/" : 
 
 function LangSwitch() {
   const { lang, setLang, t } = useI18n();
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    const close = (e: MouseEvent) => { if (!ref.current?.contains(e.target as Node)) setOpen(false); };
+    const esc = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    document.addEventListener("mousedown", close);
+    document.addEventListener("keydown", esc);
+    return () => { document.removeEventListener("mousedown", close); document.removeEventListener("keydown", esc); };
+  }, [open]);
   return (
-    <div className="glass g1 flex h-11 items-center rounded-full p-1" role="group" aria-label={t("lang.label")}>
-      {(["uz", "ru"] as const).map((l) => (
-        <button key={l} onClick={() => setLang(l)} aria-pressed={lang === l}
-          className={cn("relative h-9 min-w-9 rounded-full px-2.5 text-xs font-bold uppercase transition", lang === l ? "text-on-jade" : "text-mid hover:text-hi")}>
-          {lang === l && <motion.span layoutId="lang-pill" className="absolute inset-0 rounded-full bg-[color:var(--jade)]" transition={{ type: "spring", stiffness: 260, damping: 26 }} />}
-          <span className="relative">{l}</span>
+    <>
+      {/* Desktop/planshet: uchta tugma */}
+      <div className="glass g1 hidden h-11 items-center rounded-full p-1 sm:flex" role="group" aria-label={t("lang.label")}>
+        {LANGS.map((l) => (
+          <button key={l} onClick={() => setLang(l)} aria-pressed={lang === l} title={t(`lang.${l}`)}
+            className={cn("relative h-9 min-w-9 rounded-full px-2.5 text-xs font-bold uppercase transition", lang === l ? "text-on-jade" : "text-mid hover:text-hi")}>
+            {lang === l && <motion.span layoutId="lang-pill" className="absolute inset-0 rounded-full bg-[color:var(--jade)]" transition={{ type: "spring", stiffness: 260, damping: 26 }} />}
+            <span className="relative">{l}</span>
+          </button>
+        ))}
+      </div>
+      {/* Mobil: ixcham menyu */}
+      <div ref={ref} className="relative sm:hidden">
+        <button onClick={() => setOpen((v) => !v)} aria-haspopup="menu" aria-expanded={open} aria-label={t("lang.label")}
+          className="glass g1 flex h-11 items-center gap-1 rounded-full! px-3.5 text-xs font-bold uppercase text-hi [--r:999px]">
+          {lang}
+          <svg viewBox="0 0 24 24" className="size-3.5 text-low" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M6 9l6 6 6-6" /></svg>
         </button>
-      ))}
-    </div>
+        <AnimatePresence>
+          {open && (
+            <motion.div role="menu" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 6 }} transition={{ duration: 0.16 }}
+              className="glass g3 absolute right-0 top-full z-50 mt-2 w-44 bg-[color:var(--glass-solid-strong)]! p-1.5">
+              {LANGS.map((l) => (
+                <button key={l} role="menuitemradio" aria-checked={lang === l} onClick={() => { setLang(l); setOpen(false); }}
+                  className={cn("flex h-11 w-full items-center justify-between rounded-2xl px-3 text-sm font-medium", lang === l ? "bg-[color:var(--glass-top)] text-hi" : "text-mid")}>
+                  {t(`lang.${l}`)} <span className="text-xs font-bold uppercase text-low">{l}</span>
+                </button>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </>
   );
 }
 
